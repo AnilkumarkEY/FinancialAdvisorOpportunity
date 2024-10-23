@@ -1,13 +1,13 @@
 openapi: 3.0.0
 info:
-  title: Financial Advisor Oppurtunity Backend API
+  title: Financial Advisor Opportunity Backend API
   description: Backend service for the financial advisor frontend.
   version: "1.0"
 servers:
   - url: http://localhost:8081
     description: Development server
 paths:
-/activity/fetch-activity:
+  /activity/fetch-activity:
     get:
       summary: Fetch Activity
       description: Retrieves activity data for a specific lead.
@@ -105,7 +105,8 @@ paths:
                   message:
                     type: string
                     example: "ID lead is required."
-/activity/create-activity:
+                    
+  /activity/create-activity:
     post:
       summary: Create Activity
       description: Inserts a new activity for a specific lead.

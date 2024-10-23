@@ -1,6 +1,6 @@
-const dotenv = require('dotenv'); // For managing environment variables
-const axios = require('axios');
-const qs = require('qs');
+const dotenv = require("dotenv"); // For managing environment variables
+const axios = require("axios");
+const qs = require("qs");
 dotenv.config();
 
 async function getUserAccessToken(login) {
@@ -24,10 +24,10 @@ async function getUserAccessToken(login) {
     return tokenResponse;
   } catch (error) {
     console.error(`EXCEPTION ON LOGIN- : ${error.message}`);
-    return error
+    return error;
   }
 }
 
 module.exports = {
-    getUserAccessToken
-}
+  getUserAccessToken,
+};

@@ -1,7 +1,5 @@
-const userController = require('./userController');
-const dashboardController = require('./dashboardController');
+const activityController = require("./activityController");
 
 module.exports = {
-  userController,
-  dashboardController,
+  activityController,
 };

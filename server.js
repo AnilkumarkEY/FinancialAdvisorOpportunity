@@ -21,4 +21,6 @@ fastify.listen({ port: 8081, host: "0.0.0.0" }, async (err) => {
   }
   await connectToDatabase();
   fastify.log.info(`Server listening a`);
+
 });
+

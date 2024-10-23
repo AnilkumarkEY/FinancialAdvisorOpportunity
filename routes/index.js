@@ -1,10 +1,9 @@
-// const userRoutes = require('./user');
+const activityRoutes = require("./activity");
 const dashboardRoutes = require('./dashboard');
 
 async function routes(fastify, options) {
-    // Register user and dashboard routes
-    // fastify.register(userRoutes);
-    fastify.register(dashboardRoutes);
+  fastify.register(activityRoutes);
+  fastify.register(dashboardRoutes);
 }
 
 module.exports = routes;

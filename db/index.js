@@ -1,5 +1,7 @@
-const userProfile = require("./userProfile");
+const activity = require("./activity");
+const userProfile = require("./userProfile")
 
 module.exports = {
-    userProfile
-}
+  activity,
+  userProfile
+};

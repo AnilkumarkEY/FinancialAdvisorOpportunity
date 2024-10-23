@@ -3,8 +3,8 @@ kind: ComponentConfig
 schemaVersion: 1.0
 spec:
   inbound:
-    - name: financial-advisor-core
-      port: 8080
+    - name: financial-advisor-opportunity
+      port: 8081
       type: REST
       networkVisibility: Public
       context: /

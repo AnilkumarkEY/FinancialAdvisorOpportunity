@@ -1,35 +1,35 @@
 openapi: 3.0.0
 info:
-  title: Financial Advisor Backend API
+  title: Financial Advisor Oppurtunity Backend API
   description: Backend service for the financial advisor frontend.
   version: "1.0"
 servers:
   - url: http://localhost:8081
     description: Development server
 paths:
-  /users/login:
-    post:
-      summary: User Login
-      description: Authenticates a user and returns a token if successful.
-      operationId: loginUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userName:
-                  type: string
-                  description: The username of the user.
-                  example: "test@example.com"
-                password:
-                  type: string
-                  description: The password for the user account.
-                  example: "your_password"
+/activity/fetch-activity:
+    get:
+      summary: Fetch Activity
+      description: Retrieves activity data for a specific lead.
+      operationId: fetchActivity
+      parameters:
+        - name: idlead
+          in: query
+          required: true
+          description: The ID of the lead for which activities are to be fetched.
+          schema:
+            type: string
+            example: "c9357f00e6524ef7ba0b045dbfcfeba5"
+        - name: authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
       responses:
         '200':
-          description: Login successful
+          description: Activity data retrieved successfully
           content:
             application/json:
               schema:
@@ -42,40 +42,51 @@ paths:
                   message:
                     type: string
                     description: Status message
-                    example: "Login successful"
+                    example: "Activity data retrieved successfully"
                   data:
-                    type: object
-                    properties:
-                      token_type:
-                        type: string
-                        description: Type of the token
-                        example: "Bearer"
-                      scope:
-                        type: string
-                        description: Permissions granted
-                        example: "5d7a7727-2a96-45ba-a82f-275e573cda4e/User.Read 5d7a7727-2a96-45ba-a82f-275e573cda4e/.default"
-                      expires_in:
-                        type: integer
-                        description: Token expiration time in seconds
-                        example: 5397
-                      ext_expires_in:
-                        type: integer
-                        description: Extended expiration time in seconds
-                        example: 5397
-                      access_token:
-                        type: string
-                        description: The JWT access token
-                        example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
-                      refresh_token:
-                        type: string
-                        description: The refresh token
-                        example: "0.Ab4ANhzjhUbV_U6CEB2Go6EXQCd3el2WKrpFqC8nXlc82k6..."
-                      id_token:
-                        type: string
-                        description: The ID token
-                        example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idactivity:
+                          type: string
+                          description: Unique identifier for the activity
+                          example: "ee527d7e2533f6dcb0587f58cdc3a684"
+                        idlead:
+                          type: string
+                          description: ID of the lead associated with the activity
+                          example: "c9357f00e6524ef7ba0b045dbfcfeba5"
+                        idmeta_activity:
+                          type: string
+                          description: Metadata ID for the activity
+                          example: "d10476cbca944b4984cf2f3237a6afd4"
+                        firstname:
+                          type: string
+                          description: First name of the user associated with the activity
+                          example: "Abhishek"
+                        middlename:
+                          type: string
+                          nullable: true
+                          description: Middle name of the user associated with the activity
+                          example: null
+                        lastname:
+                          type: string
+                          description: Last name of the user associated with the activity
+                          example: "M"
+                        fullname:
+                          type: string
+                          description: Full name of the user associated with the activity
+                          example: "Abhishek M"
+                        identity:
+                          type: string
+                          description: Unique identity reference
+                          example: "5dceb723474645b1b5958eda0d97f6c2"
+                        meta_data_name:
+                          type: string
+                          description: Name of the metadata associated with the activity
+                          example: "Set Reminder"
         '401':
-          description: Unauthorized - Invalid credentials
+          description: Unauthorized - Invalid token
           content:
             application/json:
               schema:
@@ -83,7 +94,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Invalid username or password."
+                    example: "Unauthorized - Invalid token."
         '400':
           description: Bad Request - Missing parameters
           content:
@@ -93,4 +104,79 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Username and password are required."
+                    example: "ID lead is required."
+/activity/create-activity:
+    post:
+      summary: Create Activity
+      description: Inserts a new activity for a specific lead.
+      operationId: createActivity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idLead:
+                  type: string
+                  description: The ID of the lead for which the activity is created.
+                  example: "c9357f00e6524ef7ba0b045dbfcfeba5"
+                idmetaActivity:
+                  type: string
+                  description: Metadata ID for the activity.
+                  example: "d10476cbca944b4984cf2f3237a6afd4"
+                idmetaTitleActivity:
+                  type: string
+                  description: Metadata ID for the activity title.
+                  example: "64d1ff54973d4c19a79d09e7a7a74a8a"
+                activeFlag:
+                  type: integer
+                  description: Flag indicating if the activity is active (1 for active, 0 for inactive).
+                  example: 1
+      parameters:
+        - name: authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
+      responses:
+        '200':
+          description: Activity inserted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code
+                    example: 200
+                  message:
+                    type: string
+                    description: Status message
+                    example: "Activity inserted successfully"
+                  data:
+                    type: object
+                    nullable: true
+        '401':
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        '400':
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."

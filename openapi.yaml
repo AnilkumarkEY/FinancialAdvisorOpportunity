@@ -105,7 +105,7 @@ paths:
                   message:
                     type: string
                     example: "ID lead is required."
-                    
+
   /activity/create-activity:
     post:
       summary: Create Activity
@@ -181,3 +181,143 @@ paths:
                   message:
                     type: string
                     example: "Invalid input data."
+
+  /dashboard/lead-type-overview:
+    get:
+      summary: Get Lead Type Overview
+      description: Retrieves the count of leads by type.
+      operationId: getLeadTypeOverview
+      parameters:
+        - name: authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng"
+      responses:
+        '200':
+          description: Lead counts by type retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code
+                    example: 200
+                  message:
+                    type: string
+                    description: Status message
+                    example: "Lead counts by type retrieved successfully"
+                  data:
+                    type: object
+                    properties:
+                      leadTypeRes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            metaData:
+                              type: string
+                              description: Metadata ID for the lead type
+                              example: "e685e245fb274e458280daf0ee9f0fec"
+                            type:
+                              type: string
+                              description: Type of the lead
+                              example: "Warm"
+                            count:
+                              type: integer
+                              description: Number of leads of this type
+                              example: 18
+        '401':
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        '400':
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."
+
+  /dashboard/lead-status-overview:
+    get:
+      summary: Get Lead Status Overview
+      description: Retrieves the count of leads by status.
+      operationId: getLeadStatusOverview
+      parameters:
+        - name: authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsI"
+      responses:
+        '200':
+          description: Lead counts by status retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code
+                    example: 200
+                  message:
+                    type: string
+                    description: Status message
+                    example: "Lead counts by status retrieved successfully"
+                  data:
+                    type: object
+                    properties:
+                      leadStatusRes:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            metaData:
+                              type: string
+                              description: Metadata ID for the lead status
+                              example: "721fe429ffcb4453ba09354ed4cef3fa"
+                            status:
+                              type: string
+                              description: Status of the lead
+                              example: "New"
+                            count:
+                              type: integer
+                              description: Number of leads with this status
+                              example: 22
+        '401':
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        '400':
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid

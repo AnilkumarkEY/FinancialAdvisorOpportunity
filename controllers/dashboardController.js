@@ -92,16 +92,16 @@ exports.getLeadStatusCount = async (request, reply) => {
 
 exports.getLeadsByStatusWithPagination = async (request, reply) => {
   try {
-    const { status } = request.body;
+    const { leadStatus } = request.body;
     const storeAllLeadData = [];
-    if (!status) {
+    if (!leadStatus) {
       return reply
         .status(STATUS_CODES.BAD_REQUEST)
         .send(
           responseFormatter(STATUS_CODES.BAD_REQUEST, "Status is required")
         );
     }
-    const leads = await leadData.allLeads(request.isValid.identity);
+    const leads = await leadData.allLeads(request.isValid.identity, leadStatus);
     console.log(leads);
     leads.forEach((lead) => {
       const storedLeadData = {
@@ -114,9 +114,7 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
     });
     await userProfile.insertEventTransaction(request.isValid);
     return reply.status(STATUS_CODES.OK).send(
-      responseFormatter(STATUS_CODES.OK, "Leads retrieved successfully", {
-        data: storeAllLeadData,
-      })
+      responseFormatter(STATUS_CODES.OK, "Leads retrieved successfully", storeAllLeadData)
     );
   } catch (error) {
     console.error(error);

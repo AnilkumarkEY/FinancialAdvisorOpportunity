@@ -50,20 +50,27 @@ async function getLeadStatusData(identity) {
   }
 }
 
-async function allLeads(identity) {
+async function allLeads(identity,leadStatus) {
   try {
     const query = `
-    select e.fullname,l.idlead,ec.contact_value as mobile,
-    l.idmeta_lead_type as status 
-    from oppurtunity."lead" l 
-    inner join core.entity e on e."identity" = l.identity_lead_createdby 
-    left join core.entity_contact ec on ec."identity" = e."identity"
-    where 
-    ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705'and -- and -- hardcoded
-    l.identity_lead_createdby = $1 and ---  dynamic Agent Entity user role
-    l.idmeta_lead_status = '721fe429ffcb4453ba09354ed4cef3fa' --- harcode lead type - NEW
+    select
+      e1.fullname,
+      l.idlead,
+      ec.contact_value as mobile,
+      l.idmeta_lead_type,
+      om.meta_data_name as leadtype
+      from oppurtunity."lead" l
+      inner join oppurtunity.op_metadata om on om.idmetadata = l.idmeta_lead_type
+      inner join core.entity e1 on e1."identity" = l.identity_oppurtunity
+      inner join core.entity e on e."identity" = l.identity_lead_createdby
+      left join core.entity_contact ec on ec."identity" = e1."identity"
+      where
+      ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705'and -- and -- hardcoded
+      l.identity_lead_createdby = $1 and ---  dynamic Agent Entity user role
+      l.idmeta_lead_status = $2
+      order by ec.idmeta_contact_type desc
     `;
-    const res = await client.query(query,[identity]);
+    const res = await client.query(query,[identity,leadStatus]);
     return res.rows;
   } catch (err) {
     console.error("Error executing query for allLeads", err.stack);

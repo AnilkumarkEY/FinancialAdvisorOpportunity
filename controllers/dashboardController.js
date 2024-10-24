@@ -1,6 +1,6 @@
 const responseFormatter = require("../utils/responseFormatter");
 const STATUS_CODES = require("../utils/statusCodes");
-const {leadData,userProfile} = require("../db");
+const { leadData, userProfile } = require("../db");
 
 exports.getLeadCountByType = async (request, reply) => {
   try {
@@ -92,32 +92,32 @@ exports.getLeadStatusCount = async (request, reply) => {
 
 exports.getLeadsByStatusWithPagination = async (request, reply) => {
   try {
-    const { status } = request.body;
-    const storeAllLeadData = [];
-    if (!status) {
+    const { leadStatus } = request.body;
+    if (!leadStatus) {
       return reply
         .status(STATUS_CODES.BAD_REQUEST)
         .send(
           responseFormatter(STATUS_CODES.BAD_REQUEST, "Status is required")
         );
     }
-    const leads = await leadData.allLeads(request.isValid.identity);
+    const leads = await leadData.allLeads(request.isValid.identity, leadStatus);
     console.log(leads);
-    leads.forEach((lead) => {
-      const storedLeadData = {
-        full_name: lead.fullname,
-        mobile_no: lead.mobile,
-        type: lead.idmeta_lead_type,
-        status: lead.idmeta_lead_status,
-      };
-      storeAllLeadData.push(storedLeadData);
-    });
-    await userProfile.insertEventTransaction(request.isValid);
-    return reply.status(STATUS_CODES.OK).send(
-      responseFormatter(STATUS_CODES.OK, "Leads retrieved successfully", {
-        data: storeAllLeadData,
-      })
-    );
+    if (leads) {
+      await userProfile.insertEventTransaction(request.isValid);
+      return reply
+        .status(STATUS_CODES.OK)
+        .send(
+          responseFormatter(
+            STATUS_CODES.OK,
+            "Leads retrieved successfully",
+            leads
+          )
+        );
+    } else {
+      return reply
+        .status(STATUS_CODES.OK)
+        .send(responseFormatter(STATUS_CODES.OK, "No data found"));
+    }
   } catch (error) {
     console.error(error);
     return reply

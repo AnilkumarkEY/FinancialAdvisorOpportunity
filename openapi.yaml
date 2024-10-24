@@ -320,4 +320,81 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Invalid
+                    example: "Invalid input data."
+
+  /dashboard/lead-status-with-pagination:
+    post:
+      summary: Get Leads with Pagination by Status
+      description: Retrieves leads based on their status with pagination.
+      operationId: getLeadsWithPagination
+      parameters:
+        - name: authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  description: Status of the leads to filter by.
+                  example: "warm"
+      responses:
+        '200':
+          description: Leads retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code
+                    example: 200
+                  message:
+                    type: string
+                    description: Status message
+                    example: "Leads retrieved successfully"
+                  data:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            full_name:
+                              type: string
+                              description: Full name of the lead
+                              example: "Abhishek M"
+                            mobile_no:
+                              type: string
+                              description: Mobile number of the lead
+                              example: "9833220803"
+        '401':
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        '400':
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."

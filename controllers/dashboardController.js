@@ -4,16 +4,23 @@ const { leadData, userProfile } = require("../db");
 
 exports.getLeadCountByType = async (request, reply) => {
   try {
-    const processedLeads = [];
     const leads = await leadData.getLeadTypeData(request.isValid.identity);
-    leads.forEach((lead) => {
-      const storedLead = {
-        metaData: lead.lead_meta_data,
-        type: lead.lead_type,
-        count: parseInt(lead.lead_count), // Convert to integer
-      };
-      processedLeads.push(storedLead);
-    });
+    const formattedData = leads.reduce((acc, lead) => {
+      if (lead.lead_type === "Hot") {
+        acc.hotType = lead.lead_type;
+        acc.hotMetaId = lead.lead_meta_data;
+        acc.hotCount = parseInt(lead.lead_count, 10);
+      } else if (lead.lead_type === "Cold") {
+        acc.coldType = lead.lead_type;
+        acc.coldMetaId = lead.lead_meta_data;
+        acc.coldCount = parseInt(lead.lead_count, 10);
+      } else if (lead.lead_type === "Warm") {
+        acc.warmType = lead.lead_type;
+        acc.warmMetaId = lead.lead_meta_data;
+        acc.warmCount = parseInt(lead.lead_count, 10);
+      }
+      return acc;
+    }, {});
     await userProfile.insertEventTransaction(request.isValid);
     return reply
       .status(STATUS_CODES.OK)
@@ -21,7 +28,7 @@ exports.getLeadCountByType = async (request, reply) => {
         responseFormatter(
           STATUS_CODES.OK,
           "Lead counts by type retrieved successfully",
-          { leadTypeRes: processedLeads }
+          formattedData
         )
       );
   } catch (error) {

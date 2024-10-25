@@ -184,73 +184,92 @@ paths:
 
   /dashboard/lead-type-overview:
     get:
-      summary: Get Lead Type Overview
-      description: Retrieves the count of leads by type.
-      operationId: getLeadTypeOverview
-      parameters:
-        - name: authorization
-          in: header
-          required: true
-          description: Bearer token for authorization.
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng"
-      responses:
-        '200':
-          description: Lead counts by type retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    description: HTTP status code
-                    example: 200
-                  message:
-                    type: string
-                    description: Status message
-                    example: "Lead counts by type retrieved successfully"
-                  data:
-                    type: object
-                    properties:
-                      leadTypeRes:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            metaData:
-                              type: string
-                              description: Metadata ID for the lead type
-                              example: "e685e245fb274e458280daf0ee9f0fec"
-                            type:
-                              type: string
-                              description: Type of the lead
-                              example: "Warm"
-                            count:
-                              type: integer
-                              description: Number of leads of this type
-                              example: 18
-        '401':
-          description: Unauthorized - Invalid token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Unauthorized - Invalid token."
-        '400':
-          description: Bad Request - Missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Invalid input data."
+    summary: Get Lead Type Overview
+    description: Retrieves the count of leads by type.
+    operationId: getLeadTypeOverview
+    parameters:
+      - name: authorization
+        in: header
+        required: true
+        description: Bearer token for authorization.
+        schema:
+          type: string
+          example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng"
+    responses:
+      '200':
+        description: Lead counts by type retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  description: HTTP status code
+                  example: 200
+                message:
+                  type: string
+                  description: Status message
+                  example: "Lead counts by type retrieved successfully"
+                data:
+                  type: object
+                  properties:
+                    warmType:
+                      type: string
+                      description: Type of warm leads
+                      example: "Warm"
+                    warmMetaId:
+                      type: string
+                      description: Metadata ID for warm leads
+                      example: "e685e245fb274e458280daf0ee9f0fec"
+                    warmCount:
+                      type: integer
+                      description: Number of warm leads
+                      example: 18
+                    coldType:
+                      type: string
+                      description: Type of cold leads
+                      example: "Cold"
+                    coldMetaId:
+                      type: string
+                      description: Metadata ID for cold leads
+                      example: "5ff239a9a6e04274a38acebb0e334d57"
+                    coldCount:
+                      type: integer
+                      description: Number of cold leads
+                      example: 17
+                    hotType:
+                      type: string
+                      description: Type of hot leads
+                      example: "Hot"
+                    hotMetaId:
+                      type: string
+                      description: Metadata ID for hot leads
+                      example: "b59726e1c21b4d3ab4067d08b27196b3"
+                    hotCount:
+                      type: integer
+                      description: Number of hot leads
+                      example: 16
+      '401':
+        description: Unauthorized - Invalid token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Unauthorized - Invalid token."
+      '400':
+        description: Bad Request - Missing or invalid parameters
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Invalid input data."
 
   /dashboard/lead-status-overview:
     get:

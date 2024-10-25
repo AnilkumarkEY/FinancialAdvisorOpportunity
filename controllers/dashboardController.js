@@ -104,17 +104,16 @@ exports.getLeadStatusCount = async (request, reply) => {
 
 exports.getLeadsByStatusWithPagination = async (request, reply) => {
   try {
-    const { leadStatus } = request.body;
-    if (!leadStatus) {
+    const leadWithPagination = request.body;
+    if (!leadWithPagination.leadStatus) {
       return reply
         .status(STATUS_CODES.BAD_REQUEST)
         .send(
           responseFormatter(STATUS_CODES.BAD_REQUEST, "Status is required")
         );
     }
-    const leads = await leadData.allLeads(request.isValid.identity, leadStatus);
-    console.log(leads);
-    if (leads) {
+    const leads = await leadData.allLeads(request.isValid.identity, leadWithPagination);
+    if (leads.length) {
       await userProfile.insertEventTransaction(request.isValid);
       return reply
         .status(STATUS_CODES.OK)

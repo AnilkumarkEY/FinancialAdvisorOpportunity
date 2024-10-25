@@ -53,27 +53,35 @@ async function getLeadStatusData(identity) {
   }
 }
 
-async function allLeads(identity, leadStatus) {
+async function allLeads(identity, leadWithPagination) {
   try {
+    const {leadStatus, pageNumber, pageCount} = leadWithPagination
     const query = `
-    select
+      SELECT
       e1.fullname,
       l.idlead,
-      ec.contact_value as mobile,
+      ec.contact_value AS mobile,
       l.idmeta_lead_type,
-      om.meta_data_name as leadtype
-      from oppurtunity."lead" l
-      inner join oppurtunity.op_metadata om on om.idmetadata = l.idmeta_lead_type
-      inner join core.entity e1 on e1."identity" = l.identity_oppurtunity
-      inner join core.entity e on e."identity" = l.identity_lead_createdby
-      left join core.entity_contact ec on ec."identity" = e1."identity"
-      where
-      ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705'and -- and -- hardcoded
-      l.identity_lead_createdby = $1 and ---  dynamic Agent Entity user role
+      om.meta_data_name AS leadtype
+      FROM
+      oppurtunity."lead" l
+      INNER JOIN
+      oppurtunity.op_metadata om ON om.idmetadata = l.idmeta_lead_type
+      INNER JOIN
+      core.entity e1 ON e1."identity" = l.identity_oppurtunity
+      INNER JOIN
+      core.entity e ON e."identity" = l.identity_lead_createdby
+      LEFT JOIN
+      core.entity_contact ec ON ec."identity" = e1."identity"
+      WHERE
+      ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' AND
+      l.identity_lead_createdby = $1 AND -- dynamic Agent Entity user role
       l.idmeta_lead_status = $2
-      order by ec.idmeta_contact_type desc
+      ORDER BY
+      ec.idmeta_contact_type DESC
+      LIMIT $3 OFFSET ($4 - 1) * $3;
     `;
-    const res = await client.query(query, [identity, leadStatus]);
+    const res = await client.query(query, [identity, leadStatus,pageCount, pageNumber]);
     return res.rows;
   } catch (err) {
     console.error("Error executing query for allLeads", err.stack);

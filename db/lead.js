@@ -16,7 +16,7 @@ async function getLeadTypeData(identity) {
     l.idmeta_lead_type, om.meta_data_name
     ORDER BY
     lead_count DESC;`;
-    const res = await client.query(query,[identity]);
+    const res = await client.query(query, [identity]);
     return res.rows; // Return the result rows
   } catch (err) {
     console.error("Error executing query for leadData", err.stack);
@@ -26,23 +26,26 @@ async function getLeadTypeData(identity) {
 
 async function getLeadStatusData(identity) {
   try {
-    const query = `SELECT
-      l.idmeta_lead_status as lead_meta_status_data,
-      om.meta_data_name as lead_status,
-      COUNT(l.idmeta_lead_status) AS lead_status_count
+    const query = `
+      SELECT
+      l.idmeta_lead_status AS lead_meta_status_data,
+      om.meta_data_name AS lead_status,
+      COUNT(l.idmeta_lead_status) AS lead_status_count,
+      om.sub_meta_detail::text AS meta_detail  -- Convert JSON to text
       FROM
       oppurtunity."lead" l
       INNER JOIN
       oppurtunity.op_metadata om
-      ON om.idmetadata = l.idmeta_lead_status
+      ON 
+      om.idmetadata = l.idmeta_lead_status
       WHERE
       identity_lead_createdby = $1
       GROUP BY
-      l.idmeta_lead_status, om.meta_data_name
+      l.idmeta_lead_status, om.meta_data_name, om.sub_meta_detail::text  -- Convert to text in GROUP BY
       ORDER BY
       lead_status_count DESC;
     `;
-    const res = await client.query(query,[identity]);
+    const res = await client.query(query, [identity]);
     return res.rows; // Return the result rows
   } catch (err) {
     console.error("Error executing query for leadData", err.stack);
@@ -50,7 +53,7 @@ async function getLeadStatusData(identity) {
   }
 }
 
-async function allLeads(identity,leadStatus) {
+async function allLeads(identity, leadStatus) {
   try {
     const query = `
     select
@@ -70,7 +73,7 @@ async function allLeads(identity,leadStatus) {
       l.idmeta_lead_status = $2
       order by ec.idmeta_contact_type desc
     `;
-    const res = await client.query(query,[identity,leadStatus]);
+    const res = await client.query(query, [identity, leadStatus]);
     return res.rows;
   } catch (err) {
     console.error("Error executing query for allLeads", err.stack);

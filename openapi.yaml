@@ -28,7 +28,7 @@ paths:
             type: string
             example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
       responses:
-        '200':
+        "200":
           description: Activity data retrieved successfully
           content:
             application/json:
@@ -85,7 +85,7 @@ paths:
                           type: string
                           description: Name of the metadata associated with the activity
                           example: "Set Reminder"
-        '401':
+        "401":
           description: Unauthorized - Invalid token
           content:
             application/json:
@@ -95,7 +95,7 @@ paths:
                   message:
                     type: string
                     example: "Unauthorized - Invalid token."
-        '400':
+        "400":
           description: Bad Request - Missing parameters
           content:
             application/json:
@@ -143,7 +143,7 @@ paths:
             type: string
             example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
       responses:
-        '200':
+        "200":
           description: Activity inserted successfully
           content:
             application/json:
@@ -161,6 +161,95 @@ paths:
                   data:
                     type: object
                     nullable: true
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."
+
+  /dashboard/lead-type-overview:
+    get:
+      summary: Get Lead Type Overview
+      description: Retrieves the count of leads by type.
+      operationId: getLeadTypeOverview
+      parameters:
+        - name: authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsI"
+      responses:
+        '200':
+          description: Lead counts by type retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code
+                    example: 200
+                  message:
+                    type: string
+                    description: Status message
+                    example: "Lead counts by type retrieved successfully"
+                  data:
+                    type: object
+                    properties:
+                      warmType:
+                        type: string
+                        description: Type of warm leads
+                        example: "Warm"
+                      warmMetaId:
+                        type: string
+                        description: Metadata ID for warm leads
+                        example: "e685e245fb274e458280daf0ee9f0fec"
+                      warmCount:
+                        type: integer
+                        description: Number of warm leads
+                        example: 18
+                      coldType:
+                        type: string
+                        description: Type of cold leads
+                        example: "Cold"
+                      coldMetaId:
+                        type: string
+                        description: Metadata ID for cold leads
+                        example: "5ff239a9a6e04274a38acebb0e334d57"
+                      coldCount:
+                        type: integer
+                        description: Number of cold leads
+                        example: 17
+                      hotType:
+                        type: string
+                        description: Type of hot leads
+                        example: "Hot"
+                      hotMetaId:
+                        type: string
+                        description: Metadata ID for hot leads
+                        example: "b59726e1c21b4d3ab4067d08b27196b3"
+                      hotCount:
+                        type: integer
+                        description: Number of hot leads
+                        example: 16
         '401':
           description: Unauthorized - Invalid token
           content:
@@ -182,95 +271,6 @@ paths:
                     type: string
                     example: "Invalid input data."
 
-  /dashboard/lead-type-overview:
-    get:
-    summary: Get Lead Type Overview
-    description: Retrieves the count of leads by type.
-    operationId: getLeadTypeOverview
-    parameters:
-      - name: authorization
-        in: header
-        required: true
-        description: Bearer token for authorization.
-        schema:
-          type: string
-          example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng"
-    responses:
-      '200':
-        description: Lead counts by type retrieved successfully
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                status:
-                  type: integer
-                  description: HTTP status code
-                  example: 200
-                message:
-                  type: string
-                  description: Status message
-                  example: "Lead counts by type retrieved successfully"
-                data:
-                  type: object
-                  properties:
-                    warmType:
-                      type: string
-                      description: Type of warm leads
-                      example: "Warm"
-                    warmMetaId:
-                      type: string
-                      description: Metadata ID for warm leads
-                      example: "e685e245fb274e458280daf0ee9f0fec"
-                    warmCount:
-                      type: integer
-                      description: Number of warm leads
-                      example: 18
-                    coldType:
-                      type: string
-                      description: Type of cold leads
-                      example: "Cold"
-                    coldMetaId:
-                      type: string
-                      description: Metadata ID for cold leads
-                      example: "5ff239a9a6e04274a38acebb0e334d57"
-                    coldCount:
-                      type: integer
-                      description: Number of cold leads
-                      example: 17
-                    hotType:
-                      type: string
-                      description: Type of hot leads
-                      example: "Hot"
-                    hotMetaId:
-                      type: string
-                      description: Metadata ID for hot leads
-                      example: "b59726e1c21b4d3ab4067d08b27196b3"
-                    hotCount:
-                      type: integer
-                      description: Number of hot leads
-                      example: 16
-      '401':
-        description: Unauthorized - Invalid token
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-                  example: "Unauthorized - Invalid token."
-      '400':
-        description: Bad Request - Missing or invalid parameters
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-                  example: "Invalid input data."
-
   /dashboard/lead-status-overview:
     get:
       summary: Get Lead Status Overview
@@ -285,7 +285,7 @@ paths:
             type: string
             example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsI"
       responses:
-        '200':
+        "200":
           description: Lead counts by status retrieved successfully
           content:
             application/json:
@@ -320,7 +320,15 @@ paths:
                               type: integer
                               description: Number of leads with this status
                               example: 22
-        '401':
+                            bgcolor:
+                              type: string
+                              description: Background color associated with the status
+                              example: "#EFF3FA"
+                            icon:
+                              type: string
+                              description: URL of the icon associated with the status
+                              example: "https://drive.google.com/file/d/1xcnZbMHGi-Q7310OsI-4HdRZ2JsAyl35/view?usp=drive_link"
+        "401":
           description: Unauthorized - Invalid token
           content:
             application/json:
@@ -330,7 +338,7 @@ paths:
                   message:
                     type: string
                     example: "Unauthorized - Invalid token."
-        '400':
+        "400":
           description: Bad Request - Missing or invalid parameters
           content:
             application/json:
@@ -366,7 +374,7 @@ paths:
                   description: Status of the leads to filter by.
                   example: "warm"
       responses:
-        '200':
+        "200":
           description: Leads retrieved successfully
           content:
             application/json:
@@ -397,7 +405,7 @@ paths:
                               type: string
                               description: Mobile number of the lead
                               example: "9833220803"
-        '401':
+        "401":
           description: Unauthorized - Invalid token
           content:
             application/json:
@@ -407,7 +415,7 @@ paths:
                   message:
                     type: string
                     example: "Unauthorized - Invalid token."
-        '400':
+        "400":
           description: Bad Request - Missing or invalid parameters
           content:
             application/json:

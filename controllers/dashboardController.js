@@ -50,10 +50,13 @@ exports.getLeadStatusCount = async (request, reply) => {
     let inProgressCount = 0;
     const leads = await leadData.getLeadStatusData(request.isValid.identity);
     leads.forEach((lead) => {
+      const metaDetail = lead.meta_detail ? JSON.parse(lead.meta_detail) : {};
       const storedLeadStatus = {
         metaData: lead.lead_meta_status_data,
         status: lead.lead_status,
-        count: parseInt(lead.lead_status_count),
+        count: parseInt(lead.lead_status_count, 10),
+        bgcolor: metaDetail.bgcolor || null,
+        icon: metaDetail.icon || null,
       };
       if (
         [
@@ -73,6 +76,8 @@ exports.getLeadStatusCount = async (request, reply) => {
       metaData: "",
       status: "In progress",
       count: inProgressCount,
+      bgcolor: "#FFFFFF",
+      icon: process.env.INPROGRESSICON,
     });
     await userProfile.insertEventTransaction(request.isValid);
     return reply
@@ -81,7 +86,7 @@ exports.getLeadStatusCount = async (request, reply) => {
         responseFormatter(
           STATUS_CODES.OK,
           "Lead counts by type retrieved successfully",
-          { leadStatusRes: processedLeadsStatus }
+          processedLeadsStatus
         )
       );
   } catch (error) {

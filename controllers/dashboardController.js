@@ -73,7 +73,7 @@ exports.getLeadStatusCount = async (request, reply) => {
       }
     });
     processedLeadsStatus.push({
-      metaData: "",
+      metaData: process.env.INPROGRESSMETAID,
       status: "In progress",
       count: inProgressCount,
       bgcolor: "#FFFFFF",
@@ -112,22 +112,48 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
           responseFormatter(STATUS_CODES.BAD_REQUEST, "Status is required")
         );
     }
-    const leads = await leadData.allLeads(request.isValid.identity, leadWithPagination);
-    if (leads.length) {
-      await userProfile.insertEventTransaction(request.isValid);
-      return reply
-        .status(STATUS_CODES.OK)
-        .send(
-          responseFormatter(
-            STATUS_CODES.OK,
-            "Leads retrieved successfully",
-            leads
-          )
-        );
+    if (leadWithPagination.leadStatus == process.env.INPROGRESSMETAID) {
+      const leadStatusList = await leadData.inprogressLeadList(
+        request.isValid.identity,
+        leadWithPagination
+      );
+      if (leadStatusList.length) {
+        await userProfile.insertEventTransaction(request.isValid);
+        return reply
+          .status(STATUS_CODES.OK)
+          .send(
+            responseFormatter(
+              STATUS_CODES.OK,
+              "Leads retrieved successfully",
+              leadStatusList
+            )
+          );
+      } else {
+        return reply
+          .status(STATUS_CODES.OK)
+          .send(responseFormatter(STATUS_CODES.OK, "No data found"));
+      }
     } else {
-      return reply
-        .status(STATUS_CODES.OK)
-        .send(responseFormatter(STATUS_CODES.OK, "No data found"));
+      const leads = await leadData.allLeads(
+        request.isValid.identity,
+        leadWithPagination
+      );
+      if (leads.length) {
+        await userProfile.insertEventTransaction(request.isValid);
+        return reply
+          .status(STATUS_CODES.OK)
+          .send(
+            responseFormatter(
+              STATUS_CODES.OK,
+              "Leads retrieved successfully",
+              leads
+            )
+          );
+      } else {
+        return reply
+          .status(STATUS_CODES.OK)
+          .send(responseFormatter(STATUS_CODES.OK, "No data found"));
+      }
     }
   } catch (error) {
     console.error(error);

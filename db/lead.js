@@ -55,7 +55,7 @@ async function getLeadStatusData(identity) {
 
 async function allLeads(identity, leadWithPagination) {
   try {
-    const {leadStatus, pageNumber, pageCount} = leadWithPagination
+    const { leadStatus, pageNumber, pageCount } = leadWithPagination;
     const query = `
       SELECT
       e1.fullname,
@@ -81,7 +81,12 @@ async function allLeads(identity, leadWithPagination) {
       ec.idmeta_contact_type DESC
       LIMIT $3 OFFSET ($4 - 1) * $3;
     `;
-    const res = await client.query(query, [identity, leadStatus,pageCount, pageNumber]);
+    const res = await client.query(query, [
+      identity,
+      leadStatus,
+      pageCount,
+      pageNumber,
+    ]);
     return res.rows;
   } catch (err) {
     console.error("Error executing query for allLeads", err.stack);
@@ -89,8 +94,62 @@ async function allLeads(identity, leadWithPagination) {
   }
 }
 
+async function inprogressLeadList(identity, leadWithPagination) {
+  const { leadStatus, pageNumber, pageCount } = leadWithPagination;
+  try {
+    const query = `
+      SELECT DISTINCT l.idmeta_lead_status 
+      FROM oppurtunity."lead" l  
+      INNER JOIN oppurtunity.op_metadata om 
+      ON om.meta_data_name = l.idmeta_lead_status 
+      WHERE om.idmetamaster = $2 
+      AND identity_lead_createdby = $1;
+    `;
+    const res = await client.query(query, [identity, leadStatus]);
+    const distinctStatuses = [
+      ...new Set(res.rows.map((item) => item.idmeta_lead_status)),
+    ];
+    const queryToGetPagination = `
+      SELECT
+      e1.fullname,
+      l.idlead,
+      ec.contact_value AS mobile,
+      l.idmeta_lead_type,
+      om.meta_data_name AS leadtype
+      FROM
+      oppurtunity."lead" l
+      INNER JOIN
+      oppurtunity.op_metadata om ON om.idmetadata = l.idmeta_lead_type
+      INNER JOIN
+      core.entity e1 ON e1."identity" = l.identity_oppurtunity
+      INNER JOIN
+      core.entity e ON e."identity" = l.identity_lead_createdby
+      LEFT JOIN
+      core.entity_contact ec ON ec."identity" = e1."identity"
+      WHERE
+      ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' AND
+      l.identity_lead_createdby = $1 AND -- dynamic Agent Entity user role
+      l.idmeta_lead_status::uuid = ANY($2::uuid[])
+      ORDER BY
+      ec.idmeta_contact_type DESC
+      LIMIT $3 OFFSET ($4 - 1) * $3;
+    `;
+    const result = await client.query(queryToGetPagination, [
+      identity,
+      distinctStatuses,
+      pageCount,
+      pageNumber,
+    ]);
+    return result.rows;
+  } catch (error) {
+    console.error("Error executing query for allLeads", error.stack);
+    throw error;
+  }
+}
+
 module.exports = {
   getLeadTypeData,
   getLeadStatusData,
   allLeads,
+  inprogressLeadList,
 };

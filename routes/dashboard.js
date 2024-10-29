@@ -5,19 +5,29 @@ const { authentication } = require("../middleware/authentication");
 async function dashboardRoutes(fastify, options) {
   // Define dashboard routes
   fastify.get(
-    "/dashboard/lead-type-overview",
+    "/lead-type-overview",
     { preHandler: [authentication, eventValidation] },
     dashboardController.getLeadCountByType
   );
   fastify.get(
-    "/dashboard/lead-status-overview",
+    "/lead-status-overview",
     { preHandler: [authentication, eventValidation] },
     dashboardController.getLeadStatusCount
   );
   fastify.post(
-    "/dashboard/lead-status-with-pagination",
+    "/get-status-wise-lead-list",
     { preHandler: [authentication, eventValidation] },
     dashboardController.getLeadsByStatusWithPagination
+  );
+  fastify.put(
+    "/update-lead-type",
+    { preHandler: [authentication, eventValidation] },
+    dashboardController.updateLeadType
+  );
+  fastify.put(
+    "/update-lead-status",
+    { preHandler: [authentication, eventValidation] },
+    dashboardController.updateLeadStatus
   );
 }
 

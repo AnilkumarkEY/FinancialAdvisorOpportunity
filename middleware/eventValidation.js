@@ -1,6 +1,8 @@
 const routeValues = require("../config/routesValues");
 const { userProfile } = require("../db");
 const generateUniqueString = require("../utils/generateUniqueString");
+const responseFormatter = require("../utils/responseFormatter");
+const STATUS_CODES = require("../utils/statusCodes");
 async function eventValidation(request, reply) {
   try {
     let route = request.url;
@@ -15,14 +17,18 @@ async function eventValidation(request, reply) {
       request.user.oid,
       eventDefination
     );
-    request.isValid = isValid[0];
-    console.log(request.isValid);
-
-    request.isValid["idevent_transaction"] = generateUniqueString();
     if (!isValid.length) {
       return reply
-        .status(403)
-        .send({ message: "You do not have permission to access this route." });
+        .status(STATUS_CODES.FORBIDDEN)
+        .send(
+          responseFormatter(
+            STATUS_CODES.FORBIDDEN,
+            "You do not have permission to access this route."
+          )
+        );
+    } else {
+      request.isValid = isValid[0];
+      request.isValid["idevent_transaction"] = generateUniqueString();
     }
   } catch (error) {
     console.log(error);

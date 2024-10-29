@@ -56,6 +56,17 @@ async function getLeadStatusData(identity) {
 async function allLeads(identity, leadWithPagination) {
   try {
     const { leadStatus, pageNumber, pageCount } = leadWithPagination;
+    const countQuery = `
+      SELECT COUNT(*) AS totalCount
+      FROM oppurtunity."lead" l
+      INNER JOIN core.entity_contact ec ON ec."identity" = l.identity_oppurtunity
+      WHERE ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' 
+      AND l.identity_lead_createdby = $1 
+      AND l.idmeta_lead_status = $2;
+    `;
+    const countRes = await client.query(countQuery, [identity, leadStatus]);
+    const totalCount = parseInt(countRes.rows[0].totalcount, 10);
+    const totalPages = Math.ceil(totalCount / pageCount);
     const query = `
       SELECT
       e1.fullname,
@@ -87,7 +98,12 @@ async function allLeads(identity, leadWithPagination) {
       pageCount,
       pageNumber,
     ]);
-    return res.rows;
+    const result = {
+      leads: res.rows,
+      totalCount,
+      totalPages,
+    };
+    return result;
   } catch (err) {
     console.error("Error executing query for allLeads", err.stack);
     throw err;
@@ -105,10 +121,19 @@ async function inprogressLeadList(identity, leadWithPagination) {
       WHERE om.idmetamaster = $2 
       AND identity_lead_createdby = $1;
     `;
-    const res = await client.query(query, [identity, leadStatus]);
+    const resForDistinct = await client.query(query, [identity, leadStatus]);
     const distinctStatuses = [
-      ...new Set(res.rows.map((item) => item.idmeta_lead_status)),
+      ...new Set(resForDistinct.rows.map((item) => item.idmeta_lead_status)),
     ];
+    console.log(distinctStatuses, "aaaaaaaaaa");
+    const countQuery = `
+      SELECT COUNT(*) AS totalCount
+      FROM oppurtunity."lead" l
+      INNER JOIN core.entity_contact ec ON ec."identity" = l.identity_oppurtunity
+      WHERE ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' 
+      AND l.identity_lead_createdby = $1 
+      AND l.idmeta_lead_status::uuid = ANY($2::uuid[]);
+    `;
     const queryToGetPagination = `
       SELECT
       e1.fullname,
@@ -134,15 +159,63 @@ async function inprogressLeadList(identity, leadWithPagination) {
       ec.idmeta_contact_type DESC
       LIMIT $3 OFFSET ($4 - 1) * $3;
     `;
-    const result = await client.query(queryToGetPagination, [
+    const countRes = await client.query(countQuery, [
+      identity,
+      distinctStatuses,
+    ]);
+    const totalCount = parseInt(countRes.rows[0].totalcount, 10);
+    const totalPages = Math.ceil(totalCount / pageCount);
+
+    const res = await client.query(queryToGetPagination, [
       identity,
       distinctStatuses,
       pageCount,
       pageNumber,
     ]);
-    return result.rows;
+    const result = {
+      leads: res.rows,
+      totalCount,
+      totalPages,
+    };
+    return result;
   } catch (error) {
     console.error("Error executing query for allLeads", error.stack);
+    throw error;
+  }
+}
+
+async function updateLeadType(idlead, idmeta_lead_type, identity) {
+  try {
+    const query = `
+      UPDATE oppurtunity."lead"
+      SET idmeta_lead_type = $1
+      WHERE idlead = $2 AND identity_lead_createdby = $3;
+    `;
+    const res = await client.query(query, [idmeta_lead_type, idlead, identity]);
+    console.log(res.rowCount);
+    return res.rowCount;
+  } catch (error) {
+    console.error("Error executing query", error.stack);
+    throw error;
+  }
+}
+
+async function updateLeadStatus(idlead, idmeta_lead_status, identity) {
+  try {
+    const query = `
+      UPDATE oppurtunity."lead"
+      SET idmeta_lead_status = $1
+      WHERE idlead = $2 AND identity_lead_createdby = $3;
+    `;
+    const res = await client.query(query, [
+      idmeta_lead_status,
+      idlead,
+      identity,
+    ]);
+    console.log(res.rowCount);
+    return res.rowCount;
+  } catch (error) {
+    console.error("Error executing query", error.stack);
     throw error;
   }
 }
@@ -152,4 +225,6 @@ module.exports = {
   getLeadStatusData,
   allLeads,
   inprogressLeadList,
+  updateLeadType,
+  updateLeadStatus,
 };

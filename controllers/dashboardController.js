@@ -1,6 +1,7 @@
 const responseFormatter = require("../utils/responseFormatter");
 const STATUS_CODES = require("../utils/statusCodes");
-const { leadData, userProfile } = require("../db");
+const { leadData, userProfile, activity } = require("../db");
+const generateUniqueString = require("../utils/generateUniqueString");
 
 exports.getLeadCountByType = async (request, reply) => {
   try {
@@ -117,7 +118,7 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
         request.isValid.identity,
         leadWithPagination
       );
-      if (leadStatusList.length) {
+      if (leadStatusList.leads.length) {
         await userProfile.insertEventTransaction(request.isValid);
         return reply
           .status(STATUS_CODES.OK)
@@ -138,7 +139,7 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
         request.isValid.identity,
         leadWithPagination
       );
-      if (leads.length) {
+      if (leads.leads.length) {
         await userProfile.insertEventTransaction(request.isValid);
         return reply
           .status(STATUS_CODES.OK)
@@ -154,6 +155,112 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
           .status(STATUS_CODES.OK)
           .send(responseFormatter(STATUS_CODES.OK, "No data found"));
       }
+    }
+  } catch (error) {
+    console.error(error);
+    return reply
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(
+        responseFormatter(
+          STATUS_CODES.INTERNAL_SERVER_ERROR,
+          "An unexpected error occurred"
+        )
+      );
+  }
+};
+
+exports.updateLeadType = async (request, reply) => {
+  try {
+    const { idlead, idmeta_lead_type, reason } = request.body;
+    const isUpdatedLeadType = await leadData.updateLeadType(
+      idlead,
+      idmeta_lead_type,
+      request.isValid.identity
+    );
+    if (isUpdatedLeadType) {
+      const activityData = {
+        idactivity: generateUniqueString(),
+        idLead: idlead,
+        activityStartDate: new Date(),
+        description: reason,
+        effToDate: new Date(),
+        idmetaActivity: "1c65ee80e1cd47b997ce65bb1a9dffa0",
+        createdBy: request.isValid.identity,
+        createdDate: new Date(),
+      };
+      const isActivityCreated = await activity.createActivity(activityData);
+      if (isActivityCreated) {
+        await userProfile.insertEventTransaction(request.isValid);
+        return reply
+          .status(STATUS_CODES.OK)
+          .send(responseFormatter(STATUS_CODES.OK, "Lead type updated"));
+      } else {
+        return reply
+          .status(STATUS_CODES.OK)
+          .send(
+            responseFormatter(
+              STATUS_CODES.OK,
+              "activity for lead type updation failed"
+            )
+          );
+      }
+    } else {
+      return reply
+        .status(STATUS_CODES.OK)
+        .send(responseFormatter(STATUS_CODES.OK, "Lead type not updated"));
+    }
+  } catch (error) {
+    console.error(error);
+    return reply
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(
+        responseFormatter(
+          STATUS_CODES.INTERNAL_SERVER_ERROR,
+          "An unexpected error occurred"
+        )
+      );
+  }
+};
+
+exports.updateLeadStatus = async (request, reply) => {
+  try {
+    const { idlead, idmeta_lead_status, reason } = request.body;
+    const isUpdatedLeadStatus = await leadData.updateLeadStatus(
+      idlead,
+      idmeta_lead_status,
+      request.isValid.identity
+    );
+    if (isUpdatedLeadStatus) {
+      const activityData = {
+        idactivity: generateUniqueString(),
+        idLead: idlead,
+        activityStartDate: new Date(),
+        description: reason,
+        effToDate: new Date(),
+        idmetaActivity: "e2e486d7a9824c13ab5c8764e24ee23d",
+        createdBy: request.isValid.identity,
+        createdDate: new Date(),
+      };
+      const isActivityCreated = await activity.createActivity(activityData);
+      if (isActivityCreated) {
+        await userProfile.insertEventTransaction(request.isValid);
+        return reply
+          .status(STATUS_CODES.OK)
+          .send(responseFormatter(STATUS_CODES.OK, "Lead status updated"));
+      } else {
+        return reply
+          .status(STATUS_CODES.OK)
+          .send(
+            responseFormatter(
+              STATUS_CODES.OK,
+              "activity for lead status updation failed"
+            )
+          );
+      }
+    } else {
+      return reply
+        .status(STATUS_CODES.OK)
+        .send(responseFormatter(STATUS_CODES.OK, "Lead Status not updated"));
     }
   } catch (error) {
     console.error(error);

@@ -196,7 +196,7 @@ paths:
             type: string
             example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsI"
       responses:
-        '200':
+        "200":
           description: Lead counts by type retrieved successfully
           content:
             application/json:
@@ -250,7 +250,7 @@ paths:
                         type: integer
                         description: Number of hot leads
                         example: 16
-        '401':
+        "401":
           description: Unauthorized - Invalid token
           content:
             application/json:
@@ -260,7 +260,7 @@ paths:
                   message:
                     type: string
                     example: "Unauthorized - Invalid token."
-        '400':
+        "400":
           description: Bad Request - Missing or invalid parameters
           content:
             application/json:
@@ -349,7 +349,7 @@ paths:
                     type: string
                     example: "Invalid input data."
 
-  /dashboard/lead-status-with-pagination:
+  /dashboard/get-status-wise-lead-list:
     post:
       summary: Get Leads with Pagination by Status
       description: Retrieves leads based on their status with pagination.
@@ -405,6 +405,156 @@ paths:
                               type: string
                               description: Mobile number of the lead
                               example: "9833220803"
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."
+
+  /dashboard/update-lead-type:
+    put:
+      summary: Update Lead Type
+      description: Updates the type of a lead.
+      operationId: updateLeadType
+      parameters:
+        - name: authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOi"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idlead:
+                  type: string
+                  description: Unique identifier for the lead.
+                  example: "c9357f00e6524ef7ba0b045dbfcfeba5"
+                idmeta_lead_type:
+                  type: string
+                  description: Identifier for the new lead type.
+                  example: "b59726e1c21b4d3ab4067d08b27196b3"
+                reason:
+                  type: string
+                  description: Reason for updating the lead type.
+                  example: "Write your reason here"
+      responses:
+        "200":
+          description: Lead type updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code
+                    example: 200
+                  message:
+                    type: string
+                    description: Status message
+                    example: "Lead type updated"
+                  data:
+                    type: object
+                    properties:
+                      data:
+                        type: null
+                        description: No additional data returned.
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."
+
+  /dashboard/update-lead-status:
+    put:
+      summary: Update Lead Status
+      description: Updates the status of a lead.
+      operationId: updateLeadStatus
+      parameters:
+        - name: authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idlead:
+                  type: string
+                  description: Unique identifier for the lead.
+                  example: "c9357f00e6524ef7ba0b045dbfcfeba5"
+                idmeta_lead_status:
+                  type: string
+                  description: Identifier for the new lead status.
+                  example: "721fe429ffcb4453ba09354ed4cef3fa"
+                reason:
+                  type: string
+                  description: Reason for updating the lead status.
+                  example: "Write your reason here"
+      responses:
+        "200":
+          description: Lead status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code
+                    example: 200
+                  message:
+                    type: string
+                    description: Status message
+                    example: "Lead status updated"
+                  data:
+                    type: object
+                    properties:
+                      data:
+                        type: null
+                        description: No additional data returned.
         "401":
           description: Unauthorized - Invalid token
           content:

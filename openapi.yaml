@@ -165,6 +165,616 @@ paths:
                     type: string
                     example: "Invalid input data."
 
+  /activity/delete-meeting:
+    delete:
+      summary: Delete Activity
+      description: Deletes a specific activity for a lead.
+      operationId: deleteActivity
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOi..."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idlead:
+                  type: string
+                  description: ID of the lead associated with the activity to delete.
+                  example: "37e13811aceb1b601d7c2bd88ec79877"
+                idactivity:
+                  type: string
+                  description: ID of the activity to delete.
+                  example: "60816ebfc93efb14ea8bb0df0d3332d8"
+      responses:
+        "200":
+          description: Activity deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Activity deleted successfully"
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."
+
+  /activity/follow-up-meeting:
+    post:
+      summary: Create Follow-Up Activity
+      description: Inserts a new follow-up activity for a specific lead.
+      operationId: createFollowUpActivity
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOi..."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idLead:
+                  type: string
+                  description: The lead ID for which the activity is created.
+                  example: "c9357f00e6524ef7ba0b045dbfcfeba5"
+                idmetaActivity:
+                  type: string
+                  description: Metadata ID for the activity.
+                  example: "d10476cbca944b4984cf2f3237a6afd4"
+                idmetaTitleActivity:
+                  type: string
+                  description: Metadata ID for the activity title.
+                  example: "64d1ff54973d4c19a79d09e7a7a74a8a"
+                activeFlag:
+                  type: integer
+                  description: Flag indicating if the activity is active (1 for active, 0 for inactive).
+                  example: 1
+      responses:
+        "200":
+          description: Activity inserted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Activity inserted successfully"
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."
+
+  /activity/modify-meeting:
+    put:
+      summary: Modify Activity
+      description: Updates a specific activity for a lead.
+      operationId: modifyActivity
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idactivity:
+                  type: string
+                  description: The ID of the activity to be modified.
+                  example: "60816ebfc93efb14ea8bb0df0d3332d8"
+                activity_title:
+                  type: string
+                  description: The title of the activity.
+                  example: "Meeting with client"
+                description:
+                  type: string
+                  description: A detailed description of the activity.
+                  example: "Updated details about the meeting."
+                activity_start_date:
+                  type: string
+                  format: date-time
+                  description: The start date and time of the activity in ISO 8601 format.
+                  example: "2024-10-29T14:50:08.986Z"
+                activity_end_date:
+                  type: string
+                  format: date-time
+                  description: The end date and time of the activity in ISO 8601 format.
+                  example: "2024-10-31T14:50:08.986Z"
+      responses:
+        "200":
+          description: Activity updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Activity updated successfully"
+                  data:
+                    type: string
+                    description: The ID of the updated activity.
+                    example: "60816ebfc93efb14ea8bb0df0d3332d8"
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."
+
+  /activity/delete-meeting-all:
+    delete:
+      summary: Delete All Activities for a Lead
+      description: Deletes all activities associated with a specific lead.
+      operationId: deleteAllActivities
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idlead:
+                  type: string
+                  description: The ID of the lead whose activities will be deleted.
+                  example: "37e13811aceb1b601d7c2bd88ec79877"
+      responses:
+        "200":
+          description: Activities deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Activities deleted successfully"
+                  data:
+                    type: object
+                    nullable: true
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."
+
+  /activity/fetch-diary:
+    get:
+      summary: Fetch Diary for a Lead
+      description: Retrieves activity data associated with a specific lead.
+      operationId: fetchDiary
+      parameters:
+        - name: idlead
+          in: query
+          required: true
+          description: The ID of the lead for which to fetch diary entries.
+          schema:
+            type: string
+            example: "37e13811aceb1b601d7c2bd88ec79877"
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
+      responses:
+        "200":
+          description: Activity data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code
+                    example: 200
+                  message:
+                    type: string
+                    description: Status message
+                    example: "Activity data retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idlead:
+                          type: string
+                          description: The ID of the lead
+                          example: "37e13811aceb1b601d7c2bd88ec79877"
+                        idactivity:
+                          type: string
+                          description: The ID of the activity
+                          example: "e85e3f4f645b0fe45ba107440e24c7fc"
+                        activity_type:
+                          type: string
+                          description: Metadata ID for the activity type
+                          example: "d10476cbca944b4984cf2f3237a6afd4"
+                        activity_title:
+                          type: string
+                          description: Metadata ID for the activity title
+                          example: "64d1ff54973d4c19a79d09e7a7a74a8a"
+                        activity_title_name:
+                          type: string
+                          description: The name of the activity title
+                          example: "Document Collection Reminder"
+                        description:
+                          type: string
+                          description: Description of the activity
+                          example: "something about description"
+                        activity_start_date:
+                          type: string
+                          format: date-time
+                          description: Start date of the activity
+                          example: "2024-10-28T14:50:08.986Z"
+                        activity_end_date:
+                          type: string
+                          format: date-time
+                          description: End date of the activity
+                          example: "2024-10-31T14:50:08.986Z"
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."
+
+  /activity/create-diary:
+    post:
+      summary: Create Diary Activity
+      description: Inserts a new diary activity for a specific lead.
+      operationId: createDiaryActivity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idLead:
+                  type: string
+                  description: The ID of the lead for which the diary activity is created.
+                  example: "37e13811aceb1b601d7c2bd88ec79877"
+                idmetaActivity:
+                  type: string
+                  description: Metadata ID for the activity.
+                  example: "d10476cbca944b4984cf2f3237a6afd4"
+                idmetaTitleActivity:
+                  type: string
+                  description: Metadata ID for the activity title.
+                  example: "64d1ff54973d4c19a79d09e7a7a74a8a"
+                startTimeStamp:
+                  type: string
+                  format: date-time
+                  description: Start time of the activity.
+                  example: "2024-10-28T20:20:08.986Z"
+                endTimeStamp:
+                  type: string
+                  format: date-time
+                  description: End time of the activity.
+                  example: "2024-10-31T20:20:08.986Z"
+                description:
+                  type: string
+                  description: Description of the activity.
+                  example: "something about description"
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
+      responses:
+        "200":
+          description: Activity inserted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code
+                    example: 200
+                  message:
+                    type: string
+                    description: Status message
+                    example: "Activity inserted successfully"
+                  data:
+                    type: object
+                    nullable: true
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."
+
+  /activity/modify-diary:
+    put:
+      summary: Modify Diary Activity
+      description: Updates an existing diary activity for a specific lead.
+      operationId: modifyDiaryActivity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idactivity:
+                  type: string
+                  description: The ID of the activity to be updated.
+                  example: "60816ebfc93efb14ea8bb0df0d3332d8"
+                activity_title:
+                  type: string
+                  description: Metadata ID for the activity title.
+                  example: "64d1ff54973d4c19a79d09e7a7a74a8a"
+                description:
+                  type: string
+                  description: Updated description of the activity.
+                  example: "something about description updated"
+                activity_start_date:
+                  type: string
+                  format: date-time
+                  description: Start date of the activity.
+                  example: "2024-10-29T14:50:08.986Z"
+                activity_end_date:
+                  type: string
+                  format: date-time
+                  description: End date of the activity.
+                  example: "2024-10-31T14:50:08.986Z"
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
+      responses:
+        "200":
+          description: Activity updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code
+                    example: 200
+                  message:
+                    type: string
+                    description: Status message
+                    example: "Activity updated successfully"
+                  data:
+                    type: string
+                    description: ID of the updated activity
+                    example: "60816ebfc93efb14ea8bb0df0d3332d8"
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."
+
+  /activity/delete-diary:
+    delete:
+      summary: Delete Diary Activity
+      description: Deletes a specific diary activity for a given lead.
+      operationId: deleteDiaryActivity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idlead:
+                  type: string
+                  description: The ID of the lead for which the activity is to be deleted.
+                  example: "37e13811aceb1b601d7c2bd88ec79877"
+                idactivity:
+                  type: string
+                  description: The ID of the activity to be deleted.
+                  example: "60816ebfc93efb14ea8bb0df0d3332d8"
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
+      responses:
+        "200":
+          description: Activity deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code
+                    example: 200
+                  message:
+                    type: string
+                    description: Status message
+                    example: "Activity deleted successfully"
+                  data:
+                    type: null
+                    description: No additional data returned
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid input data."
+
   /dashboard/lead-type-overview:
     get:
       summary: Get Lead Type Overview
@@ -389,7 +999,7 @@ paths:
       description: Updates the type of a lead.
       operationId: updateLeadType
       parameters:
-        - name: authorization
+        - name: Authorization
           in: header
           required: true
           description: Bearer token for authorization.
@@ -456,7 +1066,7 @@ paths:
       description: Updates the status of a lead.
       operationId: updateLeadStatus
       parameters:
-        - name: authorization
+        - name: Authorization
           in: header
           required: true
           description: Bearer token for authorization.
@@ -496,620 +1106,6 @@ paths:
                   message:
                     type: string
                     example: "Lead status updated"
-        "401":
-          description: Unauthorized - Invalid token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Unauthorized - Invalid token."
-        "400":
-          description: Bad Request - Missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Invalid input data."
-
-  /activity/delete-meeting:
-    delete:
-      summary: Delete Activity
-      description: Deletes a specific activity for a lead.
-      operationId: deleteActivity
-      parameters:
-        - name: authorization
-          in: header
-          required: true
-          description: Bearer token for authorization.
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOi..."
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                idlead:
-                  type: string
-                  description: ID of the lead associated with the activity to delete.
-                  example: "37e13811aceb1b601d7c2bd88ec79877"
-                idactivity:
-                  type: string
-                  description: ID of the activity to delete.
-                  example: "60816ebfc93efb14ea8bb0df0d3332d8"
-      responses:
-        "200":
-          description: Activity deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: "Activity deleted successfully"
-        "401":
-          description: Unauthorized - Invalid token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Unauthorized - Invalid token."
-        "400":
-          description: Bad Request - Missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Invalid input data."
-
-  /activity/follow-up-meeting:
-    post:
-      summary: Create Activity
-      description: Inserts a new activity for a specific lead.
-      operationId: createActivity
-      parameters:
-        - name: authorization
-          in: header
-          required: true
-          description: Bearer token for authorization.
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOi..."
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                idLead:
-                  type: string
-                  description: The lead ID for which the activity is created.
-                  example: "c9357f00e6524ef7ba0b045dbfcfeba5"
-                idmetaActivity:
-                  type: string
-                  description: Metadata ID for the activity.
-                  example: "d10476cbca944b4984cf2f3237a6afd4"
-                idmetaTitleActivity:
-                  type: string
-                  description: Metadata ID for the activity title.
-                  example: "64d1ff54973d4c19a79d09e7a7a74a8a"
-                activeFlag:
-                  type: integer
-                  description: Flag indicating if the activity is active (1 for active, 0 for inactive).
-                  example: 1
-      responses:
-        "200":
-          description: Activity inserted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: "Activity inserted successfully"
-        "401":
-          description: Unauthorized - Invalid token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Unauthorized - Invalid token."
-        "400":
-          description: Bad Request - Missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Invalid input data."
-  
-  /activity/modify-meeting:
-    put:
-      summary: Modify Activity
-      description: Updates a specific activity for a lead.
-      operationId: modifyActivity
-      parameters:
-        - name: authorization
-          in: header
-          required: true
-          description: Bearer token for authorization.
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                idactivity:
-                  type: string
-                  description: The ID of the activity to be modified.
-                  example: "60816ebfc93efb14ea8bb0df0d3332d8"
-                activity_title:
-                  type: string
-                  description: The title of the activity.
-                  example: "64d1ff54973d4c19a79d09e7a7a74a8a"
-                description:
-                  type: string
-                  description: A detailed description of the activity.
-                  example: "something about description updated"
-                activity_start_date:
-                  type: string
-                  format: date-time
-                  description: The start date and time of the activity in ISO 8601 format.
-                  example: "2024-10-29T14:50:08.986Z"
-                activity_end_date:
-                  type: string
-                  format: date-time
-                  description: The end date and time of the activity in ISO 8601 format.
-                  example: "2024-10-31T14:50:08.986Z"
-      responses:
-        "200":
-          description: Activity updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    description: HTTP status code
-                    example: 200
-                  message:
-                    type: string
-                    description: Status message
-                    example: "Activity updated successfully"
-                  data:
-                    type: string
-                    description: The ID of the updated activity.
-                    example: "60816ebfc93efb14ea8bb0df0d3332d8"
-        "401":
-          description: Unauthorized - Invalid token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Unauthorized - Invalid token."
-        "400":
-          description: Bad Request - Missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Invalid input data."
-
-  /activity/delete-meeting-all:
-    delete:
-      summary: Delete All Activities for a Lead
-      description: Deletes all activities associated with a specific lead.
-      operationId: deleteAllActivities
-      parameters:
-        - name: authorization
-          in: header
-          required: true
-          description: Bearer token for authorization.
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                idlead:
-                  type: string
-                  description: The ID of the lead whose activities will be deleted.
-                  example: "37e13811aceb1b601d7c2bd88ec79877"
-      responses:
-        "200":
-          description: Activities deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    description: HTTP status code
-                    example: 200
-                  message:
-                    type: string
-                    description: Status message
-                    example: "Activities deleted successfully"
-                  data:
-                    type: object
-                    nullable: true
-        "401":
-          description: Unauthorized - Invalid token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Unauthorized - Invalid token."
-        "400":
-          description: Bad Request - Missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Invalid input data."
-
-  /activity/fetch-diary:
-    get:
-      summary: Fetch Diary for a Lead
-      description: Retrieves activity data associated with a specific lead.
-      operationId: fetchDiary
-      parameters:
-        - name: idlead
-          in: query
-          required: true
-          description: The ID of the lead for which to fetch diary entries.
-          schema:
-            type: string
-            example: "37e13811aceb1b601d7c2bd88ec79877"
-        - name: authorization
-          in: header
-          required: true
-          description: Bearer token for authorization.
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
-      responses:
-        "200":
-          description: Activity data retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    description: HTTP status code
-                    example: 200
-                  message:
-                    type: string
-                    description: Status message
-                    example: "Activity data retrieved successfully"
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        idlead:
-                          type: string
-                          description: The ID of the lead
-                          example: "37e13811aceb1b601d7c2bd88ec79877"
-                        idactivity:
-                          type: string
-                          description: The ID of the activity
-                          example: "e85e3f4f645b0fe45ba107440e24c7fc"
-                        activity_type:
-                          type: string
-                          description: Metadata ID for the activity type
-                          example: "d10476cbca944b4984cf2f3237a6afd4"
-                        activity_title:
-                          type: string
-                          description: Metadata ID for the activity title
-                          example: "64d1ff54973d4c19a79d09e7a7a74a8a"
-                        activity_title_name:
-                          type: string
-                          description: The name of the activity title
-                          example: "Document Collection Reminder"
-                        description:
-                          type: string
-                          description: Description of the activity
-                          example: "something about description"
-                        activity_start_date:
-                          type: string
-                          format: date-time
-                          description: Start date of the activity
-                          example: "2024-10-28T14:50:08.986Z"
-                        activity_end_date:
-                          type: string
-                          format: date-time
-                          description: End date of the activity
-                          example: "2024-10-31T14:50:08.986Z"
-        "401":
-          description: Unauthorized - Invalid token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Unauthorized - Invalid token."
-        "400":
-          description: Bad Request - Missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Invalid input data."
-
-  /activity/create-diary:
-    post:
-      summary: Create Diary Activity
-      description: Inserts a new diary activity for a specific lead.
-      operationId: createDiaryActivity
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                idLead:
-                  type: string
-                  description: The ID of the lead for which the diary activity is created.
-                  example: "37e13811aceb1b601d7c2bd88ec79877"
-                idmetaActivity:
-                  type: string
-                  description: Metadata ID for the activity.
-                  example: "d10476cbca944b4984cf2f3237a6afd4"
-                idmetaTitleActivity:
-                  type: string
-                  description: Metadata ID for the activity title.
-                  example: "64d1ff54973d4c19a79d09e7a7a74a8a"
-                startTimeStamp:
-                  type: string
-                  format: date-time
-                  description: Start time of the activity.
-                  example: "2024-10-28T20:20:08.986Z"
-                endTimeStamp:
-                  type: string
-                  format: date-time
-                  description: End time of the activity.
-                  example: "2024-10-31T20:20:08.986Z"
-                description:
-                  type: string
-                  description: Description of the activity.
-                  example: "something about description"
-      parameters:
-        - name: authorization
-          in: header
-          required: true
-          description: Bearer token for authorization.
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
-      responses:
-        "200":
-          description: Activity inserted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    description: HTTP status code
-                    example: 200
-                  message:
-                    type: string
-                    description: Status message
-                    example: "Activity inserted successfully"
-                  data:
-                    type: object
-                    nullable: true
-        "401":
-          description: Unauthorized - Invalid token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Unauthorized - Invalid token."
-        "400":
-          description: Bad Request - Missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Invalid input data."
-
-  /activity/modify-diary:
-    put:
-      summary: Modify Diary Activity
-      description: Updates an existing diary activity for a specific lead.
-      operationId: modifyDiaryActivity
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                idactivity:
-                  type: string
-                  description: The ID of the activity to be updated.
-                  example: "60816ebfc93efb14ea8bb0df0d3332d8"
-                activity_title:
-                  type: string
-                  description: Metadata ID for the activity title.
-                  example: "64d1ff54973d4c19a79d09e7a7a74a8a"
-                description:
-                  type: string
-                  description: Updated description of the activity.
-                  example: "something about description updated"
-                activity_start_date:
-                  type: string
-                  format: date-time
-                  description: Start date of the activity.
-                  example: "2024-10-29T14:50:08.986Z"
-                activity_end_date:
-                  type: string
-                  format: date-time
-                  description: End date of the activity.
-                  example: "2024-10-31T14:50:08.986Z"
-      parameters:
-        - name: authorization
-          in: header
-          required: true
-          description: Bearer token for authorization.
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
-      responses:
-        "200":
-          description: Activity updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    description: HTTP status code
-                    example: 200
-                  message:
-                    type: string
-                    description: Status message
-                    example: "Activity updated successfully"
-                  data:
-                    type: string
-                    description: ID of the updated activity
-                    example: "60816ebfc93efb14ea8bb0df0d3332d8"
-        "401":
-          description: Unauthorized - Invalid token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Unauthorized - Invalid token."
-        "400":
-          description: Bad Request - Missing or invalid parameters
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Invalid input data."
-
-  /activity/delete-diary:
-    delete:
-      summary: Delete Diary Activity
-      description: Deletes a specific diary activity for a given lead.
-      operationId: deleteDiaryActivity
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                idlead:
-                  type: string
-                  description: The ID of the lead for which the activity is to be deleted.
-                  example: "37e13811aceb1b601d7c2bd88ec79877"
-                idactivity:
-                  type: string
-                  description: The ID of the activity to be deleted.
-                  example: "60816ebfc93efb14ea8bb0df0d3332d8"
-      parameters:
-        - name: authorization
-          in: header
-          required: true
-          description: Bearer token for authorization.
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
-      responses:
-        "200":
-          description: Activity deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    description: HTTP status code
-                    example: 200
-                  message:
-                    type: string
-                    description: Status message
-                    example: "Activity deleted successfully"
-                  data:
-                    type: null
-                    description: No additional data returned
         "401":
           description: Unauthorized - Invalid token
           content:

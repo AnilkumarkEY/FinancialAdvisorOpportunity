@@ -132,7 +132,9 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
       } else {
         return reply
           .status(STATUS_CODES.OK)
-          .send(responseFormatter(STATUS_CODES.OK, "No data found"));
+          .send(
+            responseFormatter(STATUS_CODES.OK, "No data found", leadStatusList)
+          );
       }
     } else {
       const leads = await leadData.allLeads(
@@ -153,7 +155,7 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
       } else {
         return reply
           .status(STATUS_CODES.OK)
-          .send(responseFormatter(STATUS_CODES.OK, "No data found"));
+          .send(responseFormatter(STATUS_CODES.OK, "No data found", leads));
       }
     }
   } catch (error) {

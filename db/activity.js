@@ -2,27 +2,22 @@ const { client } = require("../config/db");
 async function fetchActivity(idlead) {
   try {
     const query = `
-       SELECT 
-        a.idactivity, 
-        a.idlead, 
-        a.idmeta_activity,
-        e.firstname,
-        e.middlename,
-        e.lastname,
-        e.fullname,
-        e.identity, 
-        om.meta_data_name 
-    FROM 
-        oppurtunity.activity a 
-    JOIN 
-        oppurtunity."lead" l ON a.idlead = l.idlead
-    JOIN 
-        core.entity e ON l.identity_oppurtunity = e.identity
-    JOIN 
-        oppurtunity.op_metadata om ON a.idmeta_activity = om.idmetadata
-    WHERE 
-        a.idlead = $1
-        AND a.activeflag = 1;
+      select
+      a.idlead,
+      a.idactivity,
+      a.idmeta_activity as activity_type,
+      a.idmeta_title_activity as activity_title,
+      mt.meta_data_name as activity_title_name,
+      a.description,
+      a.activity_start_date,
+      a.activity_end_date
+      from oppurtunity.activity a
+      inner join oppurtunity."lead" l on l.idlead = a.idlead
+      inner join oppurtunity.op_metadata mt on mt.idmetadata = a.idmeta_title_activity
+      inner join oppurtunity.op_metadata ma on ma.idmetadata  = a.idmeta_activity
+      where
+      a.active_flag = true --- hardcode
+      and a.idlead  = $1 --- dynamic pass lead id
     `;
 
     const res = await client.query(query, [idlead]);
@@ -42,7 +37,6 @@ async function createActivity(activityData) {
         activity_end_date,
         sortorder,
         eff_from_date,
-        activeflag,
         idlead,
         activity_start_date,
         description,
@@ -54,7 +48,7 @@ async function createActivity(activityData) {
         idmeta_title_activity
         ) 
         VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
         )
     `;
     const res = await client.query(query, [
@@ -63,7 +57,6 @@ async function createActivity(activityData) {
       activityData.activityEndDate || null,
       activityData.sortOrder || null,
       activityData.effFromDate || null,
-      activityData.activeFlag || null,
       activityData.idLead || null,
       activityData.activityStartDate || null,
       activityData.description || null,
@@ -82,7 +75,69 @@ async function createActivity(activityData) {
   }
 }
 
+async function deleteActivity(idlead, idactivity) {
+  try {
+    const query = `
+      UPDATE oppurtunity."activity"
+      SET active_flag = false
+      WHERE idlead = $1 AND idactivity = $2;
+    `;
+    const res = await client.query(query, [idlead, idactivity]);
+    console.log(res.rowCount);
+    return res.rowCount;
+  } catch (error) {
+    console.error("Error executing query", error.stack);
+    throw err;
+  }
+}
+
+async function deleteAllActivities(idlead) {
+  try {
+    const query = `
+    UPDATE oppurtunity."activity"
+    SET active_flag = false
+    WHERE idlead = $1;
+  `;
+    const res = await client.query(query, [idlead]);
+    return res.rowCount;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function updateActivity(activityData) {
+  try {
+    const query = `
+      UPDATE oppurtunity."activity"
+      SET
+      idmeta_title_activity = $1,
+      description = $2,
+      activity_start_date = $3,
+      activity_end_date = $4,
+      modifiedby = $6,
+      modified_date = NOW()
+      WHERE idactivity = $5;
+    `;
+    const values = [
+      activityData.activity_title,
+      activityData.description,
+      activityData.activity_start_date,
+      activityData.activity_end_date,
+      activityData.idactivity,
+      activityData.identity,
+    ];
+    const res = await client.query(query, values);
+    return res.rowCount;
+  } catch (error) {
+    console.error("Error executing query", error.stack);
+    throw error; // Rethrow the error for handling in the controller
+  }
+}
+
 module.exports = {
   fetchActivity,
   createActivity,
+  deleteActivity,
+  updateActivity,
+  deleteAllActivities,
 };

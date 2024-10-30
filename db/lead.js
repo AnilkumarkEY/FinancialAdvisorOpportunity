@@ -125,7 +125,6 @@ async function inprogressLeadList(identity, leadWithPagination) {
     const distinctStatuses = [
       ...new Set(resForDistinct.rows.map((item) => item.idmeta_lead_status)),
     ];
-    console.log(distinctStatuses, "aaaaaaaaaa");
     const countQuery = `
       SELECT COUNT(*) AS totalCount
       FROM oppurtunity."lead" l

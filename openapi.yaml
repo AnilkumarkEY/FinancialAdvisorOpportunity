@@ -20,7 +20,7 @@ paths:
           schema:
             type: string
             example: "c9357f00e6524ef7ba0b045dbfcfeba5"
-        - name: authorization
+        - name: Authorization
           in: header
           required: true
           description: Bearer token for authorization.
@@ -29,7 +29,7 @@ paths:
             example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
       responses:
         "200":
-          description: Activity data retrieved successfully
+          description: Activity data retrieved successfully.
           content:
             application/json:
               schema:
@@ -37,11 +37,9 @@ paths:
                 properties:
                   status:
                     type: integer
-                    description: HTTP status code
                     example: 200
                   message:
                     type: string
-                    description: Status message
                     example: "Activity data retrieved successfully"
                   data:
                     type: array
@@ -50,40 +48,31 @@ paths:
                       properties:
                         idactivity:
                           type: string
-                          description: Unique identifier for the activity
                           example: "ee527d7e2533f6dcb0587f58cdc3a684"
                         idlead:
                           type: string
-                          description: ID of the lead associated with the activity
                           example: "c9357f00e6524ef7ba0b045dbfcfeba5"
                         idmeta_activity:
                           type: string
-                          description: Metadata ID for the activity
                           example: "d10476cbca944b4984cf2f3237a6afd4"
                         firstname:
                           type: string
-                          description: First name of the user associated with the activity
                           example: "Abhishek"
                         middlename:
                           type: string
                           nullable: true
-                          description: Middle name of the user associated with the activity
                           example: null
                         lastname:
                           type: string
-                          description: Last name of the user associated with the activity
                           example: "M"
                         fullname:
                           type: string
-                          description: Full name of the user associated with the activity
                           example: "Abhishek M"
                         identity:
                           type: string
-                          description: Unique identity reference
                           example: "5dceb723474645b1b5958eda0d97f6c2"
                         meta_data_name:
                           type: string
-                          description: Name of the metadata associated with the activity
                           example: "Set Reminder"
         "401":
           description: Unauthorized - Invalid token
@@ -120,22 +109,18 @@ paths:
               properties:
                 idLead:
                   type: string
-                  description: The ID of the lead for which the activity is created.
                   example: "c9357f00e6524ef7ba0b045dbfcfeba5"
                 idmetaActivity:
                   type: string
-                  description: Metadata ID for the activity.
                   example: "d10476cbca944b4984cf2f3237a6afd4"
                 idmetaTitleActivity:
                   type: string
-                  description: Metadata ID for the activity title.
                   example: "64d1ff54973d4c19a79d09e7a7a74a8a"
                 activeFlag:
                   type: integer
-                  description: Flag indicating if the activity is active (1 for active, 0 for inactive).
                   example: 1
       parameters:
-        - name: authorization
+        - name: Authorization
           in: header
           required: true
           description: Bearer token for authorization.
@@ -152,11 +137,9 @@ paths:
                 properties:
                   status:
                     type: integer
-                    description: HTTP status code
                     example: 200
                   message:
                     type: string
-                    description: Status message
                     example: "Activity inserted successfully"
                   data:
                     type: object
@@ -188,7 +171,7 @@ paths:
       description: Retrieves the count of leads by type.
       operationId: getLeadTypeOverview
       parameters:
-        - name: authorization
+        - name: Authorization
           in: header
           required: true
           description: Bearer token for authorization.
@@ -205,50 +188,39 @@ paths:
                 properties:
                   status:
                     type: integer
-                    description: HTTP status code
                     example: 200
                   message:
                     type: string
-                    description: Status message
                     example: "Lead counts by type retrieved successfully"
                   data:
                     type: object
                     properties:
                       warmType:
                         type: string
-                        description: Type of warm leads
                         example: "Warm"
                       warmMetaId:
                         type: string
-                        description: Metadata ID for warm leads
                         example: "e685e245fb274e458280daf0ee9f0fec"
                       warmCount:
                         type: integer
-                        description: Number of warm leads
                         example: 18
                       coldType:
                         type: string
-                        description: Type of cold leads
                         example: "Cold"
                       coldMetaId:
                         type: string
-                        description: Metadata ID for cold leads
                         example: "5ff239a9a6e04274a38acebb0e334d57"
                       coldCount:
                         type: integer
-                        description: Number of cold leads
                         example: 17
                       hotType:
                         type: string
-                        description: Type of hot leads
                         example: "Hot"
                       hotMetaId:
                         type: string
-                        description: Metadata ID for hot leads
                         example: "b59726e1c21b4d3ab4067d08b27196b3"
                       hotCount:
                         type: integer
-                        description: Number of hot leads
                         example: 16
         "401":
           description: Unauthorized - Invalid token
@@ -277,7 +249,7 @@ paths:
       description: Retrieves the count of leads by status.
       operationId: getLeadStatusOverview
       parameters:
-        - name: authorization
+        - name: Authorization
           in: header
           required: true
           description: Bearer token for authorization.
@@ -294,11 +266,9 @@ paths:
                 properties:
                   status:
                     type: integer
-                    description: HTTP status code
                     example: 200
                   message:
                     type: string
-                    description: Status message
                     example: "Lead counts by status retrieved successfully"
                   data:
                     type: object
@@ -310,23 +280,18 @@ paths:
                           properties:
                             metaData:
                               type: string
-                              description: Metadata ID for the lead status
                               example: "721fe429ffcb4453ba09354ed4cef3fa"
                             status:
                               type: string
-                              description: Status of the lead
                               example: "New"
                             count:
                               type: integer
-                              description: Number of leads with this status
                               example: 22
                             bgcolor:
                               type: string
-                              description: Background color associated with the status
                               example: "#EFF3FA"
                             icon:
                               type: string
-                              description: URL of the icon associated with the status
                               example: "https://drive.google.com/file/d/1xcnZbMHGi-Q7310OsI-4HdRZ2JsAyl35/view?usp=drive_link"
         "401":
           description: Unauthorized - Invalid token
@@ -355,7 +320,7 @@ paths:
       description: Retrieves leads based on their status with pagination.
       operationId: getLeadsWithPagination
       parameters:
-        - name: authorization
+        - name: Authorization
           in: header
           required: true
           description: Bearer token for authorization.
@@ -371,7 +336,6 @@ paths:
               properties:
                 status:
                   type: string
-                  description: Status of the leads to filter by.
                   example: "warm"
       responses:
         "200":
@@ -383,28 +347,21 @@ paths:
                 properties:
                   status:
                     type: integer
-                    description: HTTP status code
                     example: 200
                   message:
                     type: string
-                    description: Status message
                     example: "Leads retrieved successfully"
                   data:
-                    type: object
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            full_name:
-                              type: string
-                              description: Full name of the lead
-                              example: "Abhishek M"
-                            mobile_no:
-                              type: string
-                              description: Mobile number of the lead
-                              example: "9833220803"
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        full_name:
+                          type: string
+                          example: "Abhishek M"
+                        mobile_no:
+                          type: string
+                          example: "9833220803"
         "401":
           description: Unauthorized - Invalid token
           content:
@@ -438,7 +395,7 @@ paths:
           description: Bearer token for authorization.
           schema:
             type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOi"
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOi..."
       requestBody:
         required: true
         content:
@@ -457,7 +414,7 @@ paths:
                 reason:
                   type: string
                   description: Reason for updating the lead type.
-                  example: "Write your reason here"
+                  example: "Updating lead type for requalification"
       responses:
         "200":
           description: Lead type updated successfully
@@ -468,18 +425,10 @@ paths:
                 properties:
                   status:
                     type: integer
-                    description: HTTP status code
                     example: 200
                   message:
                     type: string
-                    description: Status message
                     example: "Lead type updated"
-                  data:
-                    type: object
-                    properties:
-                      data:
-                        type: null
-                        description: No additional data returned.
         "401":
           description: Unauthorized - Invalid token
           content:
@@ -513,7 +462,7 @@ paths:
           description: Bearer token for authorization.
           schema:
             type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1"
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOi..."
       requestBody:
         required: true
         content:
@@ -532,7 +481,7 @@ paths:
                 reason:
                   type: string
                   description: Reason for updating the lead status.
-                  example: "Write your reason here"
+                  example: "Lead status updated due to new information"
       responses:
         "200":
           description: Lead status updated successfully
@@ -543,18 +492,10 @@ paths:
                 properties:
                   status:
                     type: integer
-                    description: HTTP status code
                     example: 200
                   message:
                     type: string
-                    description: Status message
                     example: "Lead status updated"
-                  data:
-                    type: object
-                    properties:
-                      data:
-                        type: null
-                        description: No additional data returned.
         "401":
           description: Unauthorized - Invalid token
           content:
@@ -588,7 +529,7 @@ paths:
           description: Bearer token for authorization.
           schema:
             type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOi..."
       requestBody:
         required: true
         content:
@@ -598,11 +539,11 @@ paths:
               properties:
                 idlead:
                   type: string
-                  description: The ID of the lead associated with the activity to be deleted.
+                  description: ID of the lead associated with the activity to delete.
                   example: "37e13811aceb1b601d7c2bd88ec79877"
                 idactivity:
                   type: string
-                  description: The ID of the activity to be deleted.
+                  description: ID of the activity to delete.
                   example: "60816ebfc93efb14ea8bb0df0d3332d8"
       responses:
         "200":
@@ -614,15 +555,10 @@ paths:
                 properties:
                   status:
                     type: integer
-                    description: HTTP status code
                     example: 200
                   message:
                     type: string
-                    description: Status message
                     example: "Activity deleted successfully"
-                  data:
-                    type: object
-                    nullable: true
         "401":
           description: Unauthorized - Invalid token
           content:
@@ -649,6 +585,14 @@ paths:
       summary: Create Activity
       description: Inserts a new activity for a specific lead.
       operationId: createActivity
+      parameters:
+        - name: authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOi..."
       requestBody:
         required: true
         content:
@@ -658,7 +602,7 @@ paths:
               properties:
                 idLead:
                   type: string
-                  description: The ID of the lead for which the activity is created.
+                  description: The lead ID for which the activity is created.
                   example: "c9357f00e6524ef7ba0b045dbfcfeba5"
                 idmetaActivity:
                   type: string
@@ -672,14 +616,6 @@ paths:
                   type: integer
                   description: Flag indicating if the activity is active (1 for active, 0 for inactive).
                   example: 1
-      parameters:
-        - name: authorization
-          in: header
-          required: true
-          description: Bearer token for authorization.
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
       responses:
         "200":
           description: Activity inserted successfully
@@ -690,15 +626,10 @@ paths:
                 properties:
                   status:
                     type: integer
-                    description: HTTP status code
                     example: 200
                   message:
                     type: string
-                    description: Status message
                     example: "Activity inserted successfully"
-                  data:
-                    type: object
-                    nullable: true
         "401":
           description: Unauthorized - Invalid token
           content:
@@ -719,7 +650,7 @@ paths:
                   message:
                     type: string
                     example: "Invalid input data."
-
+  
   /activity/modify-meeting:
     put:
       summary: Modify Activity
@@ -991,12 +922,12 @@ paths:
                   type: string
                   format: date-time
                   description: Start time of the activity.
-                  example: "2024-10-28 20:20:08.986"
+                  example: "2024-10-28T20:20:08.986Z"
                 endTimeStamp:
                   type: string
                   format: date-time
                   description: End time of the activity.
-                  example: "2024-10-31 20:20:08.986"
+                  example: "2024-10-31T20:20:08.986Z"
                 description:
                   type: string
                   description: Description of the activity.

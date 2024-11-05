@@ -134,10 +134,61 @@ async function updateActivity(activityData) {
   }
 }
 
+async function getReasons(metaDetailId) {
+  try {
+    const query = `
+    select idmetadata,meta_data_name 
+    from oppurtunity.op_metadata om 
+    where sub_meta_detail = $1
+    `;
+    const res = await client.query(query, [metaDetailId]);
+    return res.rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function updateStatusNotContactable(leadData) {
+  try {
+    const query = `
+      UPDATE oppurtunity."lead"
+      SET idmeta_lead_status = 'eb50fefac7f147d09049ccd156679a66',
+      modifiedby = $2,
+      modified_date = NOW()
+      WHERE idlead = $1;
+    `;
+    const values = [leadData.leadId, leadData.identity];
+    const res = await client.query(query, values);
+    return res.rowCount;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function deleteLead(leadData) {
+  try {
+    const query = `
+      UPDATE oppurtunity."lead"
+      SET activeflag = 0,
+      modifiedby = $2,
+      modified_date = NOW()
+      WHERE idlead = $1;
+    `;
+    const values = [leadData.leadId, leadData.identity];
+    const res = await client.query(query, values);
+    return res.rowCount;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   fetchActivity,
   createActivity,
   deleteActivity,
   updateActivity,
   deleteAllActivities,
+  getReasons,
+  updateStatusNotContactable,
+  deleteLead,
 };

@@ -54,6 +54,21 @@ async function activityRoutes(fastify, options) {
     { preHandler: [authentication, eventValidation] },
     activityController.deleteActivity
   );
+  fastify.get(
+    "/get-reasons",
+    { preHandler: [authentication, eventValidation] },
+    activityController.getReasons
+  );
+  fastify.put(
+    "/lead-not-contactable",
+    { preHandler: [authentication, eventValidation] },
+    activityController.changeStatusToNotContactable
+  );
+  fastify.delete(
+    "/delete-lead",
+    { preHandler: [authentication, eventValidation] },
+    activityController.deleteLead
+  );
 }
 
 module.exports = activityRoutes;

@@ -1126,3 +1126,226 @@ paths:
                   message:
                     type: string
                     example: "Invalid input data."
+
+  /activity/get-reasons:
+    get:
+      summary: Get Reasons for Status
+      description: Fetches reasons for a given status, such as `killLead`.
+      operationId: getReasonsForStatus
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IjNQYUs0RWZ5Qk5RdTNDdGpZc2EzWW1oUTVFMCIsImtpZCI6IjNQYUs0RWZ5Qk5RdTNDdGpZc2EzWW1oUTVFMCJ9."
+        - name: reasonForStatus
+          in: query
+          required: true
+          description: Reason for the status, e.g., `killLead`.
+          schema:
+            type: string
+            example: "killLead"
+      responses:
+        "200":
+          description: Reasons fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Reasons fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idmetadata:
+                          type: string
+                          example: "a87cee449e6a48a0968d867ad8d666d6"
+                        meta_data_name:
+                          type: string
+                          example: "Customer not interested"
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Invalid input or missing parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Bad Request - Missing or invalid parameters."
+
+  /activity/lead-not-contactable:
+    put:
+      summary: Update Lead Status to Not Contactable
+      description: Updates the lead status when the lead is not contactable.
+      operationId: updateLeadNotContactable
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IjNQYUs0RWZ5Qk5RdTNDdGpZc2EzWW1oUTVFMCIsImtpZCI6IjNQYUs0RWZ5Qk5RdTNDdGpZc2EzWW1oUTVFMCJ9."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                leadId:
+                  type: string
+                  description: Unique identifier for the lead.
+                  example: "e0809b0360e24706b73015c5e3c1db19"
+                idmeta_lead_status:
+                  type: string
+                  description: Identifier for the lead's new status.
+                  example: "721fe429ffcb4453ba09354ed4cef3fa"
+                leadstatus:
+                  type: string
+                  description: The updated lead status.
+                  example: "New"
+                reason_meta_id:
+                  type: string
+                  description: Identifier for the reason for updating the status.
+                  example: "9d30a551be9144faa0f015a83f65f061"
+                reason_meta_name:
+                  type: string
+                  description: The reason for the status update.
+                  example: "Not Reachable"
+                description:
+                  type: string
+                  description: An optional description providing more context.
+                  example: ""
+      responses:
+        "200":
+          description: Lead status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "status updated"
+                  data:
+                    type: null
+                    example: null
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Bad Request - Invalid input data."
+
+  /activity/delete-lead:
+    delete:
+      summary: Delete a Lead
+      description: Deletes a lead from the system based on the provided `leadId`.
+      operationId: deleteLead
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IjNQYUs0RWZ5Qk5RdTNDdGpZc2EzWW1oUTVFMCIsImtpZCI6IjNQYUs0RWZ5Qk5RdTNDdGpZc2EzWW1oUTVFMCJ9."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                leadId:
+                  type: string
+                  description: Unique identifier for the lead.
+                  example: "e0809b0360e24706b73015c5e3c1db19"
+                reason_meta_id:
+                  type: string
+                  description: Identifier for the reason for deleting the lead.
+                  example: "a87cee449e6a48a0968d867ad8d666d6"
+                reason_meta_name:
+                  type: string
+                  description: The reason for deleting the lead.
+                  example: "Customer not interested"
+                description:
+                  type: string
+                  description: An optional description explaining the deletion.
+                  example: ""
+      responses:
+        "200":
+          description: Lead deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "lead deleted"
+                  data:
+                    type: null
+                    example: null
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Bad Request - Invalid input data."
+

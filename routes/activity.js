@@ -69,6 +69,11 @@ async function activityRoutes(fastify, options) {
     { preHandler: [authentication, eventValidation] },
     activityController.deleteLead
   );
+  fastify.get(
+    "/get-activities",
+    { preHandler: [authentication, eventValidation] },
+    activityController.getActivities
+  );
 }
 
 module.exports = activityRoutes;

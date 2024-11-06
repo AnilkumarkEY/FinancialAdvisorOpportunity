@@ -343,6 +343,7 @@ exports.changeStatusToNotContactable = async (request, reply) => {
     leadData.identity = request.isValid.identity;
     const isStatusUpdated = await activity.updateStatusNotContactable(leadData);
     if (isStatusUpdated) {
+      const reason = await activity.getReasonName(leadData.reason_meta_id);
       const activityData = {
         idactivity: generateUniqueString(),
         idLead: leadData.leadId,
@@ -351,7 +352,7 @@ exports.changeStatusToNotContactable = async (request, reply) => {
           newLeadStatus: "eb50fefac7f147d09049ccd156679a66",
           previousLeadStatusName: leadData.leadstatus,
           newLeadStatusName: "Not Contacted",
-          reason_meta_name: leadData.reason_meta_name,
+          reason_meta_name: reason.meta_data_name,
           reason_meta_id: leadData.reason_meta_id,
           reason: "",
         },
@@ -363,6 +364,7 @@ exports.changeStatusToNotContactable = async (request, reply) => {
       }
       const activityCreated = await activity.createActivity(activityData);
       if (activityCreated) {
+        await userProfile.insertEventTransaction(request.isValid);
         return reply
           .status(STATUS_CODES.OK)
           .send(responseFormatter(STATUS_CODES.OK, "status updated"));
@@ -395,13 +397,14 @@ exports.deleteLead = async (request, reply) => {
     leadData.identity = request.isValid.identity;
     const isLeadDeleted = await activity.deleteLead(leadData);
     if (isLeadDeleted) {
+      const reason = await activity.getReasonName(leadData.reason_meta_id);
       const activityData = {
         idactivity: generateUniqueString(),
         idLead: leadData.leadId,
         description: {
           previousStatus: "active",
           newStatus: "inactive",
-          reason_meta_name: leadData.reason_meta_name,
+          reason_meta_name: reason.meta_data_name,
           reason_meta_id: leadData.reason_meta_id,
           reason: "",
         },
@@ -413,6 +416,7 @@ exports.deleteLead = async (request, reply) => {
       }
       const activityCreated = await activity.createActivity(activityData);
       if (activityCreated) {
+        await userProfile.insertEventTransaction(request.isValid);
         return reply
           .status(STATUS_CODES.OK)
           .send(responseFormatter(STATUS_CODES.OK, "lead deleted"));
@@ -425,6 +429,61 @@ exports.deleteLead = async (request, reply) => {
       return reply
         .status(STATUS_CODES.OK)
         .send(responseFormatter(STATUS_CODES.OK, "lead not deleted"));
+    }
+  } catch (error) {
+    console.error("Error executing", error.stack);
+    return reply
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(
+        responseFormatter(
+          STATUS_CODES.INTERNAL_SERVER_ERROR,
+          "An unexpected error occurred"
+        )
+      );
+  }
+};
+
+exports.getActivities = async (request, reply) => {
+  try {
+    const { activityType } = request.query;
+    if (!activityType) {
+      return reply
+        .status(STATUS_CODES.BAD_REQUEST)
+        .send(
+          responseFormatter(
+            STATUS_CODES.BAD_REQUEST,
+            "Missing activity parameter"
+          )
+        );
+    }
+    const activities = await activity.getActivities(activityType);
+    if (activities.length) {
+      const metaActivity = activities[0];
+      const values = activities.map((row) => ({
+        idmetadata: row.idmetadata,
+        meta_data_name: row.meta_data_name,
+      }));
+
+      // Construct the response format
+      const response = {
+        idmetaActivity: metaActivity.idmetamaster,
+        activityName: metaActivity.meta_master_name,
+        values: values,
+      };
+      await userProfile.insertEventTransaction(request.isValid);
+      return reply
+        .status(STATUS_CODES.OK)
+        .send(
+          responseFormatter(
+            STATUS_CODES.OK,
+            "Activities fetched successfully",
+            response
+          )
+        );
+    } else {
+      return reply
+        .status(STATUS_CODES.OK)
+        .send(responseFormatter(STATUS_CODES.OK, "No activities found"));
     }
   } catch (error) {
     console.error("Error executing", error.stack);

@@ -148,6 +148,20 @@ async function getReasons(metaDetailId) {
   }
 }
 
+async function getReasonName(metaId) {
+  try {
+    const query = `
+    select meta_data_name 
+    from oppurtunity.op_metadata om 
+    where idmetadata = $1
+    `;
+    const res = await client.query(query, [metaId]);
+    return res.rows[0];
+  } catch (error) {
+    throw error;
+  }
+}
+
 async function updateStatusNotContactable(leadData) {
   try {
     const query = `
@@ -182,6 +196,31 @@ async function deleteLead(leadData) {
   }
 }
 
+async function getActivities(activityType) {
+  try {
+    const query = `
+      SELECT 
+        mm.idmetamaster, 
+        mm.meta_master_name,
+        md.idmetadata, 
+        md.meta_data_name
+      FROM 
+        oppurtunity.op_metamaster mm
+      JOIN 
+        oppurtunity.op_metadata md 
+      ON 
+        mm.idmetamaster = md.idmetamaster
+      WHERE 
+        mm.meta_master_name = $1
+    `;
+    // Run the query with 'activityType' as the filter
+    const res = await client.query(query, [activityType]);
+    return res.rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   fetchActivity,
   createActivity,
@@ -191,4 +230,6 @@ module.exports = {
   getReasons,
   updateStatusNotContactable,
   deleteLead,
+  getReasonName,
+  getActivities,
 };

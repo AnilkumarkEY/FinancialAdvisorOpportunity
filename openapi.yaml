@@ -1348,3 +1348,88 @@ paths:
                   message:
                     type: string
                     example: "Bad Request - Invalid input data."
+
+  /activity/get-activities:
+    get:
+      summary: Get activities by type
+      description: Fetch activities based on the provided `activityType` query parameter.
+      operationId: getActivities
+      parameters:
+        - name: activityType
+          in: query
+          required: true
+          description: The type of activity to fetch (e.g., "Reminder Title", "Diary Title").
+          schema:
+            type: string
+            example: "Reminder Title"
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IjNQYUs0RWZ5Qk5RdTNDdGpZc2EzWW1oUTVFMCIsImtpZCI6IjNQYUs0RWZ5Qk5RdTNDdGpZc2EzWW1oUTVFMCJ9."
+      responses:
+        "200":
+          description: Activities fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Activities fetched successfully"
+                  data:
+                    type: object
+                    properties:
+                      idmetaActivity:
+                        type: string
+                        example: "1c6b8d2cc5814608bdb2fc71b84210dd"
+                      activityName:
+                        type: string
+                        example: "Reminder Title"
+                      values:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            idmetadata:
+                              type: string
+                              example: "64d1ff54973d4c19a79d09e7a7a74a8a"
+                            meta_data_name:
+                              type: string
+                              example: "Document Collection Reminder"
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Bad Request - Missing or invalid `activityType`."
+        "500":
+          description: Internal Server Error - Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "An unexpected error occurred."

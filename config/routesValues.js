@@ -10,6 +10,7 @@ exports.routeValues = {
   "/activity/modify-diary": "fd29ea65126c4d51986f335512bc7c4b",
   "/activity/delete-diary": "588447f2c69a419b9026c1f6650c8609",
   "/activity/get-reasons": "588447f2c69a419b9026c1f6650c8609",
+  "/activity/get-activities": "588447f2c69a419b9026c1f6650c8609",
   "/activity/lead-not-contactable": "588447f2c69a419b9026c1f6650c8609",
   "/activity/delete-lead": "588447f2c69a419b9026c1f6650c8609",
   "/dashboard/update-lead-type": "c2a04e70f16541f5b52f1b0803ee46d3",

@@ -14,7 +14,7 @@ async function activityRoutes(fastify, options) {
     { preHandler: [authentication, eventValidation] },
     activityController.insertActivity
   );
-  fastify.delete(
+  fastify.put(
     "/delete-meeting",
     { preHandler: [authentication, eventValidation] },
     activityController.deleteActivity
@@ -29,7 +29,7 @@ async function activityRoutes(fastify, options) {
     { preHandler: [authentication, eventValidation] },
     activityController.updateActivity
   );
-  fastify.delete(
+  fastify.put(
     "/delete-meeting-all",
     { preHandler: [authentication, eventValidation] },
     activityController.deleteAllActivity
@@ -49,7 +49,7 @@ async function activityRoutes(fastify, options) {
     { preHandler: [authentication, eventValidation] },
     activityController.updateActivity
   );
-  fastify.delete(
+  fastify.put(
     "/delete-diary",
     { preHandler: [authentication, eventValidation] },
     activityController.deleteActivity
@@ -64,7 +64,7 @@ async function activityRoutes(fastify, options) {
     { preHandler: [authentication, eventValidation] },
     activityController.changeStatusToNotContactable
   );
-  fastify.delete(
+  fastify.put(
     "/delete-lead",
     { preHandler: [authentication, eventValidation] },
     activityController.deleteLead

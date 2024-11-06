@@ -166,7 +166,7 @@ paths:
                     example: "Invalid input data."
 
   /activity/delete-meeting:
-    delete:
+    put:
       summary: Delete Activity
       description: Deletes a specific activity for a lead.
       operationId: deleteActivity
@@ -381,7 +381,7 @@ paths:
                     example: "Invalid input data."
 
   /activity/delete-meeting-all:
-    delete:
+    put:
       summary: Delete All Activities for a Lead
       description: Deletes all activities associated with a specific lead.
       operationId: deleteAllActivities
@@ -708,7 +708,7 @@ paths:
                     example: "Invalid input data."
 
   /activity/delete-diary:
-    delete:
+    put:
       summary: Delete Diary Activity
       description: Deletes a specific diary activity for a given lead.
       operationId: deleteDiaryActivity
@@ -1276,7 +1276,7 @@ paths:
                     example: "Bad Request - Invalid input data."
 
   /activity/delete-lead:
-    delete:
+    put:
       summary: Delete a Lead
       description: Deletes a lead from the system based on the provided `leadId`.
       operationId: deleteLead
@@ -1348,4 +1348,3 @@ paths:
                   message:
                     type: string
                     example: "Bad Request - Invalid input data."
-

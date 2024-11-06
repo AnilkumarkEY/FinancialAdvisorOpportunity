@@ -37,7 +37,7 @@ exports.getActivity = async (request, reply) => {
     } else {
       return reply
         .status(STATUS_CODES.OK)
-        .send(responseFormatter(STATUS_CODES.OK, "No activity data found", {}));
+        .send(responseFormatter(STATUS_CODES.OK, "No activity data found", []));
     }
   } catch (error) {
     // Handle unexpected errors

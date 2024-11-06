@@ -90,7 +90,8 @@ async function allLeads(identity, leadWithPagination) {
       WHERE
       ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' AND
       l.identity_lead_createdby = $1 AND -- dynamic Agent Entity user role
-      l.idmeta_lead_status = $2
+      l.idmeta_lead_status = $2 AND
+      l.activeflag = 1
       ORDER BY
       ec.idmeta_contact_type DESC
       LIMIT $3 OFFSET ($4 - 1) * $3;
@@ -135,6 +136,7 @@ async function inprogressLeadList(identity, leadWithPagination) {
       INNER JOIN core.entity_contact ec ON ec."identity" = l.identity_oppurtunity
       WHERE ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' 
       AND l.identity_lead_createdby = $1 
+      AND l.activeflag = 1 
       AND l.idmeta_lead_status::uuid = ANY($2::uuid[]);
     `;
     const queryToGetPagination = `
@@ -157,6 +159,7 @@ async function inprogressLeadList(identity, leadWithPagination) {
       WHERE
       ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' AND
       l.identity_lead_createdby = $1 AND -- dynamic Agent Entity user role
+      AND l.activeflag = 1 
       l.idmeta_lead_status::uuid = ANY($2::uuid[])
       ORDER BY
       ec.idmeta_contact_type DESC

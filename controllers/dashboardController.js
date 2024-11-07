@@ -1,11 +1,11 @@
 const responseFormatter = require("../utils/responseFormatter");
 const STATUS_CODES = require("../utils/statusCodes");
-const { leadData, userProfile, activity } = require("../db");
+const { leadDB, userProfile, activity } = require("../db");
 const generateUniqueString = require("../utils/generateUniqueString");
 
 exports.getLeadCountByType = async (request, reply) => {
   try {
-    const leads = await leadData.getLeadTypeData(request.isValid.identity);
+    const leads = await leadDB.getLeadTypeData(request.isValid.identity);
     const formattedData = leads.reduce((acc, lead) => {
       if (lead.lead_type === "Hot") {
         acc.hotType = lead.lead_type;
@@ -49,7 +49,7 @@ exports.getLeadStatusCount = async (request, reply) => {
   try {
     const processedLeadsStatus = [];
     let inProgressCount = 0;
-    const leads = await leadData.getLeadStatusData(request.isValid.identity);
+    const leads = await leadDB.getLeadStatusData(request.isValid.identity);
     leads.forEach((lead) => {
       const metaDetail = lead.meta_detail ? JSON.parse(lead.meta_detail) : {};
       const storedLeadStatus = {
@@ -114,7 +114,7 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
         );
     }
     if (leadWithPagination.leadStatus == process.env.INPROGRESSMETAID) {
-      const leadStatusList = await leadData.inprogressLeadList(
+      const leadStatusList = await leadDB.inprogressLeadList(
         request.isValid.identity,
         leadWithPagination
       );
@@ -137,7 +137,7 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
           );
       }
     } else {
-      const leads = await leadData.allLeads(
+      const leads = await leadDB.allLeads(
         request.isValid.identity,
         leadWithPagination
       );
@@ -174,7 +174,7 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
 exports.updateLeadType = async (request, reply) => {
   try {
     const { idlead, idmeta_lead_type, reason } = request.body;
-    const isUpdatedLeadType = await leadData.updateLeadType(
+    const isUpdatedLeadType = await leadDB.updateLeadType(
       idlead,
       idmeta_lead_type,
       request.isValid.identity
@@ -227,7 +227,7 @@ exports.updateLeadType = async (request, reply) => {
 exports.updateLeadStatus = async (request, reply) => {
   try {
     const { idlead, idmeta_lead_status, reason } = request.body;
-    const isUpdatedLeadStatus = await leadData.updateLeadStatus(
+    const isUpdatedLeadStatus = await leadDB.updateLeadStatus(
       idlead,
       idmeta_lead_status,
       request.isValid.identity

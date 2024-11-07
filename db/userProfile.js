@@ -63,15 +63,24 @@ async function checkValidRoute(oid, eventDefination) {
 }
 
 const insertEventTransaction = async (data) => {
-  const { identity, idurc, idevent_defination, idevent_transaction } = data;
+  const { identity, idurc, idevent_defination, idevent_transaction, idactivity } = data;
   const allowedSourceQuery = `
     Select idevent_def_allowed_source from core.event_def_allowed_source where idevent_defination = $1
     `;
   const entityUrcAuthQuery = `Select identity_urc_auth from core.entity_urc_auth where idurc = $1`;
   const query = `
-        INSERT INTO core.event_transaction (idevent_transaction, idevent_def_allowed_source, 
-        identity, identity_urc_auth, event_start_time, event_endtime)
-        VALUES ($1, $2, $3, $4, NOW(), NOW());
+        INSERT INTO core.event_transaction (
+        idevent_transaction, 
+        idevent_def_allowed_source, 
+        identity, 
+        identity_urc_auth, 
+        event_start_time, 
+        event_endtime,
+        event_transaction_ref
+        )
+        VALUES (
+        $1, $2, $3, $4, NOW(), NOW(), $5
+        );
       `;
 
   try {
@@ -89,6 +98,7 @@ const insertEventTransaction = async (data) => {
       idevent_def_allowed_source,
       identity,
       identity_urc_auth,
+      idactivity || null
     ]);
     console.log("Insert successful:", result);
   } catch (error) {
@@ -96,4 +106,9 @@ const insertEventTransaction = async (data) => {
   }
 };
 
-module.exports = { checkActiveFlag, insertEventTransaction, insertSessionData, checkValidRoute};
+module.exports = {
+  checkActiveFlag,
+  insertEventTransaction,
+  insertSessionData,
+  checkValidRoute,
+};

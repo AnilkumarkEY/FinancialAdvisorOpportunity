@@ -1,7 +1,8 @@
 const responseFormatter = require("../utils/responseFormatter");
 const STATUS_CODES = require("../utils/statusCodes");
 const generateUniqueString = require("../utils/generateUniqueString");
-const { activity, userProfile } = require("../db");
+const timeFormattedActivity = require("../utils/timeFormattedActivity");
+const { activity, userProfile, leadDB } = require("../db");
 const moment = require("moment");
 
 exports.getActivity = async (request, reply) => {
@@ -25,36 +26,9 @@ exports.getActivity = async (request, reply) => {
     const activities = await activity.fetchActivity(idlead);
 
     if (activities && activities.length > 0) {
-      const processActivities = async (activities) => {
-        return activities.map((activity) => {
-          // Format the start and end date/time
-          const startDateFormatted = activity.activity_start_date
-            ? moment(activity.activity_start_date).format("DD/MM/YYYY")
-            : null;
-
-          const startTimeFormatted = activity.activity_start_date
-            ? moment(activity.activity_start_date).format("HH:mm")
-            : null;
-
-          const endDateFormatted = activity.activity_end_date
-            ? moment(activity.activity_end_date).format("DD/MM/YYYY")
-            : startDateFormatted; // If endDate is null, use startDate
-
-          const endTimeFormatted = activity.activity_end_date
-            ? moment(activity.activity_end_date).format("HH:mm")
-            : startTimeFormatted; // If endTime is null, use startTime
-
-          // Add the formatted fields to each activity
-          return {
-            ...activity, // Spread the existing fields
-            startDateFormatted,
-            startTime: startTimeFormatted,
-            endDateFormatted,
-            endTime: endTimeFormatted,
-          };
-        });
-      };
-      const processedActivities = await processActivities(activities);
+      const processedActivities = await timeFormattedActivity.processActivities(
+        activities
+      );
       await userProfile.insertEventTransaction(request.isValid);
       return reply
         .status(STATUS_CODES.OK)
@@ -122,6 +96,7 @@ exports.insertActivity = async (request, reply) => {
     console.log(createActivity);
 
     if (createActivity) {
+      request.isValid.idactivity = activityData.idactivity;
       await userProfile.insertEventTransaction(request.isValid);
       return reply
         .status(STATUS_CODES.OK)
@@ -484,6 +459,42 @@ exports.getActivities = async (request, reply) => {
       return reply
         .status(STATUS_CODES.OK)
         .send(responseFormatter(STATUS_CODES.OK, "No activities found"));
+    }
+  } catch (error) {
+    console.error("Error executing", error.stack);
+    return reply
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(
+        responseFormatter(
+          STATUS_CODES.INTERNAL_SERVER_ERROR,
+          "An unexpected error occurred"
+        )
+      );
+  }
+};
+
+exports.getTimeline = async (request, reply) => {
+  try {
+    const { leadId } = request.query;
+    const leadTimeLine = await leadDB.getLeadTimeline(leadId);
+    if (leadTimeLine) {
+      const processedActivities = await timeFormattedActivity.processActivities(
+        leadTimeLine
+      );
+      await userProfile.insertEventTransaction(request.isValid);
+      return reply
+        .status(STATUS_CODES.OK)
+        .send(
+          responseFormatter(
+            STATUS_CODES.OK,
+            "Lead timeline fetched successfully",
+            processedActivities
+          )
+        );
+    } else {
+      return reply
+        .status(STATUS_CODES.OK)
+        .send(responseFormatter(STATUS_CODES.OK, "Lead timline not found", []));
     }
   } catch (error) {
     console.error("Error executing", error.stack);

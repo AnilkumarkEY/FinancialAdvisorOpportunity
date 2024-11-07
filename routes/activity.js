@@ -74,6 +74,11 @@ async function activityRoutes(fastify, options) {
     { preHandler: [authentication, eventValidation] },
     activityController.getActivities
   );
+  fastify.get(
+    "/get-lead-timeline",
+    { preHandler: [authentication, eventValidation] },
+    activityController.getTimeline
+  );
 }
 
 module.exports = activityRoutes;

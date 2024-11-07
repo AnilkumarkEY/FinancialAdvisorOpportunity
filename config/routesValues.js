@@ -13,6 +13,7 @@ exports.routeValues = {
   "/activity/get-activities": "588447f2c69a419b9026c1f6650c8609",
   "/activity/lead-not-contactable": "588447f2c69a419b9026c1f6650c8609",
   "/activity/delete-lead": "588447f2c69a419b9026c1f6650c8609",
+  "/activity/get-lead-timeline": "588447f2c69a419b9026c1f6650c8609",
   "/dashboard/update-lead-type": "c2a04e70f16541f5b52f1b0803ee46d3",
   "/dashboard/update-lead-status": "c2a04e70f16541f5b52f1b0803ee46d3",
   "/dashboard/lead-type-overview": "ff268ac0ebf2499a9712d6961df4bff6",

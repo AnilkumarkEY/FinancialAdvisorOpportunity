@@ -1433,3 +1433,108 @@ paths:
                   message:
                     type: string
                     example: "An unexpected error occurred."
+
+  /activity/get-lead-timeline:
+    get:
+      summary: Get Lead Timeline
+      description: Retrieves the timeline activities for a given lead based on the `leadId` query parameter.
+      operationId: getLeadTimeline
+      parameters:
+        - name: leadId
+          in: query
+          required: true
+          description: The unique identifier of the lead whose timeline is to be fetched.
+          schema:
+            type: string
+            example: "37e13811aceb1b601d7c2bd88ec79877"
+        - name: authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IjNQYUs0RWZ5Qk5RdTNDdGpZc2EzWW1oUTVFMCIsImtpZCI6IjNQYUs0RWZ5Qk5RdTNDdGpZc2EzWW1oUTVFMCJ9."
+      responses:
+        "200":
+          description: Lead timeline fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Lead timeline fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idactivity:
+                          type: string
+                          example: "2c8584033136194bc7c7374a9367df5e"
+                        idmeta_activity:
+                          type: string
+                          example: "d10476cbca944b4984cf2f3237a6afd4"
+                        activity_type:
+                          type: string
+                          example: "Set Reminder"
+                        activity_title:
+                          type: string
+                          example: "Document Collection Reminder"
+                        description:
+                          type: string
+                          example: "test to check if activityid is stored in event_trans_ref"
+                        activity_start_date:
+                          type: string
+                          format: date-time
+                          example: "2024-10-20T14:50:00.000Z"
+                        activity_end_date:
+                          type: string
+                          format: date-time
+                          example: "2024-10-30T14:50:00.000Z"
+                        startDateFormatted:
+                          type: string
+                          example: "20/10/2024"
+                        startTime:
+                          type: string
+                          example: "20:20"
+                        endDateFormatted:
+                          type: string
+                          example: "30/10/2024"
+                        endTime:
+                          type: string
+                          example: "20:20"
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Bad Request - Missing or invalid `leadId`."
+        "500":
+          description: Internal Server Error - Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "An unexpected error occurred."

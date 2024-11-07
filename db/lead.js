@@ -226,6 +226,32 @@ async function updateLeadStatus(idlead, idmeta_lead_status, identity) {
   }
 }
 
+async function getLeadTimeline(leadId) {
+  try {
+    const query = `
+      select
+      a.idactivity,
+      a.idmeta_activity,
+      om_activity.meta_data_name as activity_type,
+      om_title.meta_data_name as activity_title,
+      a.description,
+      a.activity_start_date,
+      a.activity_end_date
+      from oppurtunity.activity a
+      inner join oppurtunity.op_metadata om_activity on om_activity.idmetadata = a.idmeta_activity
+      inner join oppurtunity.op_metadata om_title on om_title.idmetadata = a.idmeta_title_activity
+      inner join core.event_transaction et on et.event_transaction_ref = a.idactivity
+      inner join core.event_def_allowed_source edas on edas.idevent_def_allowed_source = et.idevent_def_allowed_source
+      inner join oppurtunity.op_metadata evt_filter on evt_filter.meta_data_name = edas.idevent_defination
+      where a.idlead = $1
+    `;
+    const res = await client.query(query, [leadId]);
+    return res.rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   getLeadTypeData,
   getLeadStatusData,
@@ -233,4 +259,5 @@ module.exports = {
   inprogressLeadList,
   updateLeadType,
   updateLeadStatus,
+  getLeadTimeline,
 };

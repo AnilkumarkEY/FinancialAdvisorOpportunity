@@ -244,6 +244,7 @@ async function getLeadTimeline(leadId) {
       inner join core.event_def_allowed_source edas on edas.idevent_def_allowed_source = et.idevent_def_allowed_source
       inner join oppurtunity.op_metadata evt_filter on evt_filter.meta_data_name = edas.idevent_defination
       where a.idlead = $1
+      AND a.active_flag = true
     `;
     const res = await client.query(query, [leadId]);
     return res.rows;

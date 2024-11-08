@@ -478,7 +478,7 @@ exports.getTimeline = async (request, reply) => {
     const { leadId } = request.query;
     const leadTimeLine = await leadDB.getLeadTimeline(leadId);
     if (leadTimeLine) {
-      const processedActivities = await timeFormattedActivity.processActivities(
+      const processedActivities = await timeFormattedActivity.processTimelines(
         leadTimeLine
       );
       await userProfile.insertEventTransaction(request.isValid);

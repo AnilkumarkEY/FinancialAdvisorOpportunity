@@ -159,7 +159,7 @@ async function inprogressLeadList(identity, leadWithPagination) {
       WHERE
       ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' AND
       l.identity_lead_createdby = $1 AND -- dynamic Agent Entity user role
-      AND l.activeflag = 1 
+      l.activeflag = 1 AND
       l.idmeta_lead_status::uuid = ANY($2::uuid[])
       ORDER BY
       ec.idmeta_contact_type DESC

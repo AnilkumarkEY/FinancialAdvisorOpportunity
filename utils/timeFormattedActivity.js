@@ -58,13 +58,13 @@ exports.processTimelines = async (activities) => {
       } ${daysDifference > 0 ? "later" : "earlier"}`;
     }
 
-    // Format the start and end date/time
+    // Format the start and end date/time in 12-hour format with AM/PM
     const startDateFormatted = activity.activity_start_date
       ? startDate.format("DD/MM/YYYY")
       : null;
 
     const startTimeFormatted = activity.activity_start_date
-      ? startDate.format("HH:mm")
+      ? startDate.format("hh:mm A") // 12-hour format with AM/PM
       : null;
 
     const endDateFormatted = activity.activity_end_date
@@ -72,7 +72,7 @@ exports.processTimelines = async (activities) => {
       : startDateFormatted; // If endDate is null, use startDate
 
     const endTimeFormatted = activity.activity_end_date
-      ? moment(activity.activity_end_date).format("HH:mm")
+      ? moment(activity.activity_end_date).format("hh:mm A") // 12-hour format with AM/PM
       : startTimeFormatted; // If endTime is null, use startTime
 
     const formattedActivity = {
@@ -96,5 +96,33 @@ exports.processTimelines = async (activities) => {
     dayGroup.data.push(formattedActivity);
   });
 
+  // Sort the groupedActivities array based on the day difference
+  groupedActivities.sort((a, b) => {
+    const dayValueA = extractDayValue(a.day);
+    const dayValueB = extractDayValue(b.day);
+
+    return dayValueA - dayValueB;
+  });
+
+  // Reverse the order to get the most recent activity first
+  groupedActivities.reverse();
+
   return groupedActivities;
 };
+
+function extractDayValue(dayLabel) {
+  if (dayLabel === "today") {
+    return 0;
+  }
+  if (dayLabel === "tomorrow") {
+    return 1;
+  }
+  if (dayLabel === "yesterday") {
+    return -1;
+  }
+  const match = dayLabel.match(/(\d+) day/);
+  if (match && match[1]) {
+    return parseInt(match[1], 10) * (dayLabel.includes("earlier") ? -1 : 1);
+  }
+  return 0;
+}

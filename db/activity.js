@@ -44,11 +44,10 @@ async function createActivity(activityData) {
         idmeta_activity,
         createdby,
         modifiedby,
-        created_date,
         idmeta_title_activity
         ) 
         VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
         )
     `;
     const res = await client.query(query, [
@@ -64,7 +63,6 @@ async function createActivity(activityData) {
       activityData.idmetaActivity || null,
       activityData.createdBy || null,
       activityData.modifiedBy || null,
-      activityData.createdDate || null,
       activityData.idmetaTitleActivity || null,
     ]);
     console.log(res.rowCount);

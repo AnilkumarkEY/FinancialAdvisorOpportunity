@@ -12,11 +12,11 @@ async function getLeadTypeData(identity) {
     ON om.idmetadata = l.idmeta_lead_type
     WHERE
     identity_lead_createdby = $1
+    AND l.activeflag = 1
     GROUP BY
     l.idmeta_lead_type, om.meta_data_name
     ORDER BY
     lead_count DESC;`;
-        // AND l.activeflag = 1
     const res = await client.query(query, [identity]);
     return res.rows; // Return the result rows
   } catch (err) {
@@ -41,12 +41,12 @@ async function getLeadStatusData(identity) {
       om.idmetadata = l.idmeta_lead_status
       WHERE
       identity_lead_createdby = $1
+      AND l.activeflag = 1
       GROUP BY
       l.idmeta_lead_status, om.meta_data_name, om.sub_meta_detail::text  -- Convert to text in GROUP BY
       ORDER BY
       lead_status_count DESC;
     `;
-          // AND l.activeflag = 1
     const res = await client.query(query, [identity]);
     return res.rows; // Return the result rows
   } catch (err) {
@@ -64,9 +64,9 @@ async function allLeads(identity, leadWithPagination) {
       INNER JOIN core.entity_contact ec ON ec."identity" = l.identity_oppurtunity
       WHERE ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' 
       AND l.identity_lead_createdby = $1 
+      AND l.activeflag = 1
       AND l.idmeta_lead_status = $2;
     `;
-          // AND l.activeflag = 1
     const countRes = await client.query(countQuery, [identity, leadStatus]);
     const totalCount = parseInt(countRes.rows[0].totalcount, 10);
     const totalPages = Math.ceil(totalCount / pageCount);
@@ -90,12 +90,12 @@ async function allLeads(identity, leadWithPagination) {
       WHERE
       ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' AND
       l.identity_lead_createdby = $1 AND -- dynamic Agent Entity user role
-      l.idmeta_lead_status = $2 --AND
+      l.idmeta_lead_status = $2 AND
+      l.activeflag = 1
       ORDER BY
       ec.idmeta_contact_type DESC
       LIMIT $3 OFFSET ($4 - 1) * $3;
     `;
-          // l.activeflag = 1
     const res = await client.query(query, [
       identity,
       leadStatus,
@@ -123,9 +123,9 @@ async function inprogressLeadList(identity, leadWithPagination) {
       INNER JOIN oppurtunity.op_metadata om 
       ON om.meta_data_name = l.idmeta_lead_status 
       WHERE om.idmetamaster = $2
+      AND l.activeflag = 1 
       AND identity_lead_createdby = $1;
     `;
-          // AND l.activeflag = 1 
     const resForDistinct = await client.query(query, [identity, leadStatus]);
     const distinctStatuses = [
       ...new Set(resForDistinct.rows.map((item) => item.idmeta_lead_status)),
@@ -136,9 +136,9 @@ async function inprogressLeadList(identity, leadWithPagination) {
       INNER JOIN core.entity_contact ec ON ec."identity" = l.identity_oppurtunity
       WHERE ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' 
       AND l.identity_lead_createdby = $1 
+      AND l.activeflag = 1 
       AND l.idmeta_lead_status::uuid = ANY($2::uuid[]);
     `;
-          // AND l.activeflag = 1 
     const queryToGetPagination = `
       SELECT
       e1.fullname,
@@ -159,12 +159,12 @@ async function inprogressLeadList(identity, leadWithPagination) {
       WHERE
       ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' AND
       l.identity_lead_createdby = $1 AND -- dynamic Agent Entity user role
+      l.activeflag = 1 AND
       l.idmeta_lead_status::uuid = ANY($2::uuid[])
       ORDER BY
       ec.idmeta_contact_type DESC
       LIMIT $3 OFFSET ($4 - 1) * $3;
     `;
-          // l.activeflag = 1 AND
     const countRes = await client.query(countQuery, [
       identity,
       distinctStatuses,

@@ -45,12 +45,73 @@ exports.getLeadCountByType = async (request, reply) => {
   }
 };
 
+// exports.getLeadStatusCount = async (request, reply) => {
+//   try {
+//     const processedLeadsStatus = [];
+//     let inProgressCount = 0;
+//     const leads = await leadDB.getLeadStatusData(request.isValid.identity);
+//     leads.forEach((lead) => {
+//       const metaDetail = lead.meta_detail ? JSON.parse(lead.meta_detail) : {};
+//       const storedLeadStatus = {
+//         metaData: lead.lead_meta_status_data,
+//         status: lead.lead_status,
+//         count: parseInt(lead.lead_status_count, 10),
+//         bgcolor: metaDetail.bgcolor || null,
+//         icon: metaDetail.icon || null,
+//       };
+//       if (
+//         [
+//           "Contacted",
+//           "Interested",
+//           "Qualified",
+//           "Proposal Sent",
+//           "Negotiation",
+//         ].includes(lead.lead_status)
+//       ) {
+//         inProgressCount += storedLeadStatus.count;
+//       } else {
+//         processedLeadsStatus.push(storedLeadStatus);
+//       }
+//     });
+//     processedLeadsStatus.push({
+//       metaData: process.env.INPROGRESSMETAID,
+//       status: "In progress",
+//       count: inProgressCount,
+//       bgcolor: "#FFFFFF",
+//       icon: process.env.INPROGRESSICON,
+//     });
+//     await userProfile.insertEventTransaction(request.isValid);
+//     return reply
+//       .status(STATUS_CODES.OK)
+//       .send(
+//         responseFormatter(
+//           STATUS_CODES.OK,
+//           "Lead counts by type retrieved successfully",
+//           processedLeadsStatus
+//         )
+//       );
+//   } catch (error) {
+//     console.error(error);
+//     return reply
+//       .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+//       .send(
+//         responseFormatter(
+//           STATUS_CODES.INTERNAL_SERVER_ERROR,
+//           "An unexpected error occurred"
+//         )
+//       );
+//   }
+// };
 exports.getLeadStatusCount = async (request, reply) => {
   try {
     const processedLeadsStatus = [];
     let inProgressCount = 0;
     const leads = await leadDB.getLeadStatusData(request.isValid.identity);
+
     leads.forEach((lead) => {
+      // Skip leads with status "Converted" and "Lost"
+      if (["Converted", "Lost"].includes(lead.lead_status)) return;
+
       const metaDetail = lead.meta_detail ? JSON.parse(lead.meta_detail) : {};
       const storedLeadStatus = {
         metaData: lead.lead_meta_status_data,
@@ -59,6 +120,7 @@ exports.getLeadStatusCount = async (request, reply) => {
         bgcolor: metaDetail.bgcolor || null,
         icon: metaDetail.icon || null,
       };
+
       if (
         [
           "Contacted",
@@ -73,6 +135,7 @@ exports.getLeadStatusCount = async (request, reply) => {
         processedLeadsStatus.push(storedLeadStatus);
       }
     });
+
     processedLeadsStatus.push({
       metaData: process.env.INPROGRESSMETAID,
       status: "In progress",
@@ -80,6 +143,7 @@ exports.getLeadStatusCount = async (request, reply) => {
       bgcolor: "#FFFFFF",
       icon: process.env.INPROGRESSICON,
     });
+
     await userProfile.insertEventTransaction(request.isValid);
     return reply
       .status(STATUS_CODES.OK)

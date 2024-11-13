@@ -76,7 +76,8 @@ async function allLeads(identity, leadWithPagination) {
       l.idlead,
       ec.contact_value AS mobile,
       l.idmeta_lead_type,
-      om.meta_data_name AS leadtype
+      om.meta_data_name AS leadtype,
+      CONCAT('tel:', ec.contact_value) AS url  -- Add this line to create the tel: link
       FROM
       oppurtunity."lead" l
       INNER JOIN
@@ -146,7 +147,8 @@ async function inprogressLeadList(identity, leadWithPagination) {
       l.idlead,
       ec.contact_value AS mobile,
       l.idmeta_lead_type,
-      om.meta_data_name AS leadtype
+      om.meta_data_name AS leadtype,
+      CONCAT('tel:', ec.contact_value) AS url
       FROM
       oppurtunity."lead" l
       INNER JOIN
@@ -266,6 +268,45 @@ async function getStatusName(leadStatus) {
   return res.rows;
 }
 
+async function leadListSearch(searchQuery, identity) {
+  try {
+    const query = `
+      SELECT
+      e1.fullname,
+      l.idlead,
+      ec.contact_value AS mobile,
+      l.idmeta_lead_type,
+      om.meta_data_name AS leadtype,
+      CONCAT('tel:', ec.contact_value) AS url
+      FROM
+      oppurtunity."lead" l
+      INNER JOIN
+      oppurtunity.op_metadata om ON om.idmetadata = l.idmeta_lead_type
+      INNER JOIN
+      core.entity e1 ON e1."identity" = l.identity_oppurtunity
+      INNER JOIN
+      core.entity e ON e."identity" = l.identity_lead_createdby
+      LEFT JOIN
+      core.entity_contact ec ON ec."identity" = e1."identity"
+      WHERE
+      ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' AND
+      l.identity_lead_createdby = $2 AND -- dynamic Agent Entity user role
+      l.activeflag = 1 AND
+      (
+          e1.fullname ILIKE '%' || $1 || '%' OR
+          ec.contact_value LIKE '%' || $1 || '%'
+      )
+      ORDER BY
+      l.created_date DESC,
+      ec.idmeta_contact_type DESC
+    `;
+    const res = await client.query(query, [searchQuery, identity]);
+    return res.rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   getLeadTypeData,
   getLeadStatusData,
@@ -275,4 +316,5 @@ module.exports = {
   updateLeadStatus,
   getLeadTimeline,
   getStatusName,
+  leadListSearch,
 };

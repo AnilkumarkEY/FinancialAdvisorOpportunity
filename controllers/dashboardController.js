@@ -184,19 +184,17 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
       );
       if (leadStatusList.leads.length) {
         await userProfile.insertEventTransaction(request.isValid);
-        return reply
-          .status(STATUS_CODES.OK)
-          .send(
-            responseFormatter(
-              STATUS_CODES.OK,
-              "Leads retrieved successfully",
-              leadStatusList
-              // {
-              //   statusName: "inprogress",
-              //   leadStatusList
-              // }
-            )
-          );
+        return reply.status(STATUS_CODES.OK).send(
+          responseFormatter(
+            STATUS_CODES.OK,
+            "Leads retrieved successfully",
+            leadStatusList
+            // {
+            //   statusName: "inprogress",
+            //   leadStatusList
+            // }
+          )
+        );
       } else {
         return reply
           .status(STATUS_CODES.OK)
@@ -209,22 +207,20 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
         request.isValid.identity,
         leadWithPagination
       );
-      const status = await leadDB.getStatusName(leadWithPagination.leadStatus)
+      const status = await leadDB.getStatusName(leadWithPagination.leadStatus);
       if (leads.leads.length) {
         await userProfile.insertEventTransaction(request.isValid);
-        return reply
-          .status(STATUS_CODES.OK)
-          .send(
-            responseFormatter(
-              STATUS_CODES.OK,
-              "Leads retrieved successfully",
-              leads
-              // {
-              //   statusName: status[0].meta_data_name,
-              //   leads
-              // }
-            )
-          );
+        return reply.status(STATUS_CODES.OK).send(
+          responseFormatter(
+            STATUS_CODES.OK,
+            "Leads retrieved successfully",
+            leads
+            // {
+            //   statusName: status[0].meta_data_name,
+            //   leads
+            // }
+          )
+        );
       } else {
         return reply
           .status(STATUS_CODES.OK)
@@ -336,6 +332,42 @@ exports.updateLeadStatus = async (request, reply) => {
       return reply
         .status(STATUS_CODES.OK)
         .send(responseFormatter(STATUS_CODES.OK, "Lead Status not updated"));
+    }
+  } catch (error) {
+    console.error(error);
+    return reply
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .send(
+        responseFormatter(
+          STATUS_CODES.INTERNAL_SERVER_ERROR,
+          "An unexpected error occurred"
+        )
+      );
+  }
+};
+
+exports.leadListSearch = async (request, reply) => {
+  try {
+    const { searchQuery } = request.body;
+    const leads = await leadDB.leadListSearch(
+      searchQuery,
+      request.isValid.identity
+    );
+    if (leads) {
+      await userProfile.insertEventTransaction(request.isValid);
+      return reply
+        .status(STATUS_CODES.OK)
+        .send(
+          responseFormatter(
+            STATUS_CODES.OK,
+            "Leads retrieved successfully",
+            leads
+          )
+        );
+    } else {
+      return reply
+        .status(STATUS_CODES.OK)
+        .send(responseFormatter(STATUS_CODES.OK, "Lead not found"));
     }
   } catch (error) {
     console.error(error);

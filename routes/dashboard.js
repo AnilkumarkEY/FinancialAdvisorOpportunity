@@ -29,6 +29,11 @@ async function dashboardRoutes(fastify, options) {
     { preHandler: [authentication, eventValidation] },
     dashboardController.updateLeadStatus
   );
+  fastify.post(
+    "/lead-list-search",
+    { preHandler: [authentication, eventValidation] },
+    dashboardController.leadListSearch
+  );
 }
 
 module.exports = dashboardRoutes;

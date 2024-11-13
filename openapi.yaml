@@ -752,8 +752,8 @@ paths:
                     description: Status message
                     example: "Activity deleted successfully"
                   data:
-                    type: null
-                    description: No additional data returned
+                    type: string
+                    description: "No additional data returned"
         "401":
           description: Unauthorized - Invalid token
           content:
@@ -1252,8 +1252,8 @@ paths:
                     type: string
                     example: "status updated"
                   data:
-                    type: null
-                    example: null
+                    type: string
+                    example: "null"
         "401":
           description: Unauthorized - Invalid token
           content:
@@ -1326,8 +1326,8 @@ paths:
                     type: string
                     example: "lead deleted"
                   data:
-                    type: null
-                    example: null
+                    type: string
+                    example: "null"
         "401":
           description: Unauthorized - Invalid token
           content:
@@ -1528,6 +1528,103 @@ paths:
                   message:
                     type: string
                     example: "Bad Request - Missing or invalid `leadId`."
+        "500":
+          description: Internal Server Error - Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "An unexpected error occurred."
+
+  /lead-list-search:
+    post:
+      summary: Search for leads based on a search query
+      description: Retrieves leads based on the provided search query, such as a partial name or other parameters.
+      operationId: searchLeads
+      parameters:
+        - name: authorization
+          in: header
+          required: true
+          description: Bearer token for authorization.
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IjNQYUs0RWZ5Qk5RdTNDdGpZc2EzWW1oUTVFMCIsImtpZCI6IjNQYUs0RWZ5Qk5RdTNDdGpZc2EzWW1oUTVFMCJ9."
+        - name: Content-Type
+          in: header
+          required: true
+          description: The content type of the request body.
+          schema:
+            type: string
+            example: "application/json"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                searchQuery:
+                  type: string
+                  example: "Adi"
+      responses:
+        "200":
+          description: Leads retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "Leads retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        fullname:
+                          type: string
+                          example: "Aditya TestDate"
+                        idlead:
+                          type: string
+                          example: "9b454d3daaf17202a51cf8fc6e6f5597"
+                        mobile:
+                          type: string
+                          example: "9091342931"
+                        idmeta_lead_type:
+                          type: string
+                          example: "b59726e1c21b4d3ab4067d08b27196b3"
+                        leadtype:
+                          type: string
+                          example: "Hot"
+                        url:
+                          type: string
+                          example: "tel:9091342931"
+        "401":
+          description: Unauthorized - Invalid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized - Invalid token."
+        "400":
+          description: Bad Request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Bad Request - Missing or invalid `searchQuery`."
         "500":
           description: Internal Server Error - Unexpected error
           content:

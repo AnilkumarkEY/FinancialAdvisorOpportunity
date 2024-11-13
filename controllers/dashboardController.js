@@ -190,10 +190,11 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
             responseFormatter(
               STATUS_CODES.OK,
               "Leads retrieved successfully",
-              {
-                statusName: "inprogress",
-                leadStatusList
-              }
+              leadStatusList
+              // {
+              //   statusName: "inprogress",
+              //   leadStatusList
+              // }
             )
           );
       } else {
@@ -217,10 +218,11 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
             responseFormatter(
               STATUS_CODES.OK,
               "Leads retrieved successfully",
-              {
-                statusName: status[0].meta_data_name,
-                leads
-              }
+              leads
+              // {
+              //   statusName: status[0].meta_data_name,
+              //   leads
+              // }
             )
           );
       } else {

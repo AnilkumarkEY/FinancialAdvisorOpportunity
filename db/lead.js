@@ -238,7 +238,8 @@ async function getLeadTimeline(leadId) {
       om_title.meta_data_name as activity_title,
       a.description,
       a.activity_start_date,
-      a.activity_end_date
+      a.activity_end_date,
+      a.created_date::timestamp AS created_date_utc
       from oppurtunity.activity a
       inner join oppurtunity.op_metadata om_activity on om_activity.idmetadata = a.idmeta_activity
       inner join oppurtunity.op_metadata om_title on om_title.idmetadata = a.idmeta_title_activity

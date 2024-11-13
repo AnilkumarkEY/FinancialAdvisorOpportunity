@@ -32,9 +32,16 @@ exports.processActivities = async (activities) => {
 
 exports.processTimelines = async (activities) => {
   const today = moment().startOf("day"); // Get today's date without time for comparison
+  const yesterday = moment().subtract(1, "days").startOf("day"); // Get yesterday's date without time for comparison
   const groupedActivities = [];
 
-  activities.forEach((activity) => {
+  // Filter out activities that are from the future
+  const validActivities = activities.filter((activity) => {
+    const activityDate = moment(activity.activity_start_date);
+    return activityDate.isSameOrBefore(today); // Only consider activities up to today
+  });
+
+  validActivities.forEach((activity) => {
     const startDate = moment(activity.activity_start_date); // Start date of the activity
 
     // Normalize the start date to remove time component
@@ -48,15 +55,12 @@ exports.processTimelines = async (activities) => {
     // Determine the label for the day
     if (daysDifference === 0) {
       dayLabel = "today";
-    } else if (daysDifference === 1) {
-      dayLabel = "tomorrow";
     } else if (daysDifference === -1) {
       dayLabel = "yesterday";
-    } else {
-      dayLabel = `${Math.abs(daysDifference)} day${
-        Math.abs(daysDifference) > 1 ? "s" : ""
-      } ${daysDifference > 0 ? "later" : "earlier"}`;
     }
+
+    // Skip if the activity is not "today" or "yesterday"
+    if (!dayLabel) return;
 
     // Format the start and end date/time in 12-hour format with AM/PM
     const startDateFormatted = activity.activity_start_date
@@ -96,12 +100,11 @@ exports.processTimelines = async (activities) => {
     dayGroup.data.push(formattedActivity);
   });
 
-  // Sort the groupedActivities array based on the day difference
-  groupedActivities.sort((a, b) => {
-    const dayValueA = extractDayValue(a.day);
-    const dayValueB = extractDayValue(b.day);
-
-    return dayValueA - dayValueB;
+  // Sort the groupedActivities array based on the created_date_utc
+  groupedActivities.forEach((group) => {
+    group.data.sort((a, b) =>
+      moment(b.created_date_utc).isBefore(moment(a.created_date_utc)) ? 1 : -1
+    );
   });
 
   // Reverse the order to get the most recent activity first
@@ -110,19 +113,19 @@ exports.processTimelines = async (activities) => {
   return groupedActivities;
 };
 
-function extractDayValue(dayLabel) {
-  if (dayLabel === "today") {
-    return 0;
-  }
-  if (dayLabel === "tomorrow") {
-    return 1;
-  }
-  if (dayLabel === "yesterday") {
-    return -1;
-  }
-  const match = dayLabel.match(/(\d+) day/);
-  if (match && match[1]) {
-    return parseInt(match[1], 10) * (dayLabel.includes("earlier") ? -1 : 1);
-  }
-  return 0;
-}
+// function extractDayValue(dayLabel) {
+//   if (dayLabel === "today") {
+//     return 0;
+//   }
+//   if (dayLabel === "tomorrow") {
+//     return 1;
+//   }
+//   if (dayLabel === "yesterday") {
+//     return -1;
+//   }
+//   const match = dayLabel.match(/(\d+) day/);
+//   if (match && match[1]) {
+//     return parseInt(match[1], 10) * (dayLabel.includes("earlier") ? -1 : 1);
+//   }
+//   return 0;
+// }

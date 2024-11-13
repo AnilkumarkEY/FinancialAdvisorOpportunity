@@ -93,6 +93,7 @@ async function allLeads(identity, leadWithPagination) {
       l.idmeta_lead_status = $2 AND
       l.activeflag = 1
       ORDER BY
+      l.created_date DESC,  -- ordering by created_date in descending order
       ec.idmeta_contact_type DESC
       LIMIT $3 OFFSET ($4 - 1) * $3;
     `;
@@ -162,6 +163,7 @@ async function inprogressLeadList(identity, leadWithPagination) {
       l.activeflag = 1 AND
       l.idmeta_lead_status::uuid = ANY($2::uuid[])
       ORDER BY
+      l.created_date DESC,
       ec.idmeta_contact_type DESC
       LIMIT $3 OFFSET ($4 - 1) * $3;
     `;
@@ -253,6 +255,16 @@ async function getLeadTimeline(leadId) {
   }
 }
 
+async function getStatusName(leadStatus) {
+  const query = `
+  select om.meta_data_name 
+  from oppurtunity.op_metadata om 
+  where om.idmetadata = $1
+  `;
+  const res = await client.query(query, [leadStatus]);
+  return res.rows;
+}
+
 module.exports = {
   getLeadTypeData,
   getLeadStatusData,
@@ -261,4 +273,5 @@ module.exports = {
   updateLeadType,
   updateLeadStatus,
   getLeadTimeline,
+  getStatusName,
 };

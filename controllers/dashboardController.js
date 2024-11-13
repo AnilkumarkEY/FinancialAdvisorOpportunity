@@ -190,7 +190,10 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
             responseFormatter(
               STATUS_CODES.OK,
               "Leads retrieved successfully",
-              leadStatusList
+              {
+                statusName: "inprogress",
+                leadStatusList
+              }
             )
           );
       } else {
@@ -205,6 +208,7 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
         request.isValid.identity,
         leadWithPagination
       );
+      const status = await leadDB.getStatusName(leadWithPagination.leadStatus)
       if (leads.leads.length) {
         await userProfile.insertEventTransaction(request.isValid);
         return reply
@@ -213,7 +217,10 @@ exports.getLeadsByStatusWithPagination = async (request, reply) => {
             responseFormatter(
               STATUS_CODES.OK,
               "Leads retrieved successfully",
-              leads
+              {
+                statusName: status[0].meta_data_name,
+                leads
+              }
             )
           );
       } else {

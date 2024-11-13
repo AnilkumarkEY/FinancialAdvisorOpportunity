@@ -31,101 +31,106 @@ exports.processActivities = async (activities) => {
 };
 
 exports.processTimelines = async (activities) => {
-  const today = moment().startOf("day"); // Get today's date without time for comparison
-  const yesterday = moment().subtract(1, "days").startOf("day"); // Get yesterday's date without time for comparison
-  const groupedActivities = [];
+  // Get today's date, yesterday's date, and the date format for comparison
+  const todayUTC = moment().utc().startOf("day");
+  const yesterdayUTC = moment().utc().subtract(1, "days").startOf("day");
 
-  // Filter out activities that are from the future
-  const validActivities = activities.filter((activity) => {
-    const activityDate = moment(activity.activity_start_date);
-    return activityDate.isSameOrBefore(today); // Only consider activities up to today
-  });
+  // Grouped activities by day label (today, yesterday, earlier)
+  const groupedActivities = {
+    today: [],
+    yesterday: [],
+    earlier: [],
+  };
 
-  validActivities.forEach((activity) => {
-    const startDate = moment(activity.activity_start_date); // Start date of the activity
+  // Process each activity and classify them into today, yesterday, or earlier
+  activities.forEach((activity) => {
+    const createdDate = moment(activity.created_date_utc).utc(); // Ensure UTC time zone for created_date_utc
 
-    // Normalize the start date to remove time component
-    const startDateNormalized = startDate.startOf("day");
-
-    // Calculate the difference in days from today
-    const daysDifference = startDateNormalized.diff(today, "days");
-
-    let dayLabel;
-
-    // Determine the label for the day
-    if (daysDifference === 0) {
-      dayLabel = "today";
-    } else if (daysDifference === -1) {
-      dayLabel = "yesterday";
+    // Check if the activity was created today
+    if (createdDate.isSame(todayUTC, "day")) {
+      groupedActivities.today.push(activity);
     }
-
-    // Skip if the activity is not "today" or "yesterday"
-    if (!dayLabel) return;
-
-    // Format the start and end date/time in 12-hour format with AM/PM
-    const startDateFormatted = activity.activity_start_date
-      ? startDate.format("DD/MM/YYYY")
-      : null;
-
-    const startTimeFormatted = activity.activity_start_date
-      ? startDate.format("hh:mm A") // 12-hour format with AM/PM
-      : null;
-
-    const endDateFormatted = activity.activity_end_date
-      ? moment(activity.activity_end_date).format("DD/MM/YYYY")
-      : startDateFormatted; // If endDate is null, use startDate
-
-    const endTimeFormatted = activity.activity_end_date
-      ? moment(activity.activity_end_date).format("hh:mm A") // 12-hour format with AM/PM
-      : startTimeFormatted; // If endTime is null, use startTime
-
-    const formattedActivity = {
-      ...activity, // Spread the existing fields
-      startDateFormatted,
-      startTime: startTimeFormatted,
-      endDateFormatted,
-      endTime: endTimeFormatted,
-    };
-
-    // Check if the dayLabel already exists in the groupedActivities array
-    let dayGroup = groupedActivities.find((group) => group.day === dayLabel);
-
-    // If the group doesn't exist, create a new one
-    if (!dayGroup) {
-      dayGroup = { day: dayLabel, data: [] };
-      groupedActivities.push(dayGroup);
+    // Check if the activity was created yesterday
+    else if (createdDate.isSame(yesterdayUTC, "day")) {
+      groupedActivities.yesterday.push(activity);
     }
-
-    // Push the activity to the correct day group
-    dayGroup.data.push(formattedActivity);
+    // Otherwise, it's considered "earlier"
+    else {
+      groupedActivities.earlier.push(activity);
+    }
   });
 
-  // Sort the groupedActivities array based on the created_date_utc
-  groupedActivities.forEach((group) => {
-    group.data.sort((a, b) =>
-      moment(b.created_date_utc).isBefore(moment(a.created_date_utc)) ? 1 : -1
-    );
-  });
+  // Function to format and sort activities within a group
+  const formatAndSortActivities = (activities) => {
+    return activities
+      .map((activity) => {
+        // Create a moment object for activity's start date to format it
+        const startDate = moment(activity.activity_start_date);
+        const startDateFormatted = startDate.format("DD/MM/YYYY");
+        const startTimeFormatted = startDate.format("hh:mm A"); // 12-hour format with AM/PM
 
-  // Reverse the order to get the most recent activity first
-  groupedActivities.reverse();
+        const endDateFormatted = activity.activity_end_date
+          ? moment(activity.activity_end_date).format("DD/MM/YYYY")
+          : startDateFormatted; // If endDate is null, use startDate
 
-  return groupedActivities;
+        const endTimeFormatted = activity.activity_end_date
+          ? moment(activity.activity_end_date).format("hh:mm A") // 12-hour format with AM/PM
+          : startTimeFormatted; // If endTime is null, use startTime
+
+        // Convert created_date_utc from UTC to local time, then format it to 12-hour format with AM/PM
+        const createdDate = moment(activity.created_date_utc).utc(); // Ensure UTC for createdDate
+        const createdDateFormatted = createdDate.format("DD/MM/YYYY");
+
+        // Convert to local time and then format as 12-hour time with AM/PM
+        const createdTimeLocal = createdDate.local().format("hh:mm A"); // 12-hour format with AM/PM
+
+        // Return a formatted activity with all necessary details
+        return {
+          ...activity, // Spread the existing fields
+          startDateFormatted,
+          startTime: startTimeFormatted,
+          endDateFormatted,
+          endTime: endTimeFormatted,
+          createdDateFormatted, // Add formatted created date
+          createdTime: createdTimeLocal, // Use local time for createdTime in 12-hour format with AM/PM
+        };
+      })
+      .sort((a, b) =>
+        moment(b.created_date_utc).isBefore(moment(a.created_date_utc)) ? -1 : 1
+      ); // Sort by created_date_utc (descending)
+  };
+
+  // Format and sort activities for each group
+  const todayActivities = formatAndSortActivities(groupedActivities.today);
+  const yesterdayActivities = formatAndSortActivities(
+    groupedActivities.yesterday
+  );
+  const earlierActivities = formatAndSortActivities(groupedActivities.earlier);
+
+  // Prepare the result structure
+  const result = [];
+
+  if (todayActivities.length > 0) {
+    result.push({
+      day: "today",
+      data: todayActivities,
+    });
+  }
+
+  if (yesterdayActivities.length > 0) {
+    result.push({
+      day: "yesterday",
+      data: yesterdayActivities,
+    });
+  }
+
+  if (earlierActivities.length > 0) {
+    result.push({
+      day: "earlier",
+      data: earlierActivities,
+    });
+  }
+
+  // Return the result array
+  return result;
 };
-
-// function extractDayValue(dayLabel) {
-//   if (dayLabel === "today") {
-//     return 0;
-//   }
-//   if (dayLabel === "tomorrow") {
-//     return 1;
-//   }
-//   if (dayLabel === "yesterday") {
-//     return -1;
-//   }
-//   const match = dayLabel.match(/(\d+) day/);
-//   if (match && match[1]) {
-//     return parseInt(match[1], 10) * (dayLabel.includes("earlier") ? -1 : 1);
-//   }
-//   return 0;
-// }

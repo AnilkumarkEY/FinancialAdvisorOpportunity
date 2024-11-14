@@ -9,7 +9,7 @@ exports.getActivity = async (request, reply) => {
   try {
     // Extract the idlead from the request parameters or query (depends on how the frontend sends it)
     const { idlead } = request.query;
-    console.log(request.query);
+    console.log(request.query, request.route);
 
     if (!idlead) {
       return reply
@@ -21,9 +21,14 @@ exports.getActivity = async (request, reply) => {
           )
         );
     }
-
+    let idmeta_activity;
+    if(request.route == '/activity/fetch-meeting'){
+      idmeta_activity = 'a7e525c767e54effa5da5734fa9fedc5';
+    }else if(request.route == '/activity/fetch-diary'){
+      idmeta_activity = 'd21ee67769984670bf8dfe0c8fe208df'
+    }
     // Fetch activity data from the database
-    const activities = await activity.fetchActivity(idlead);
+    const activities = await activity.fetchActivity(idlead, idmeta_activity);
 
     if (activities && activities.length > 0) {
       const processedActivities = await timeFormattedActivity.processActivities(

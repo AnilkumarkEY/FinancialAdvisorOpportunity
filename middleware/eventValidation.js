@@ -29,6 +29,7 @@ async function eventValidation(request, reply) {
     } else {
       request.isValid = isValid[0];
       request.isValid["idevent_transaction"] = generateUniqueString();
+      request.route = route;
     }
   } catch (error) {
     console.log(error);

@@ -1,5 +1,5 @@
 const { client } = require("../config/db");
-async function fetchActivity(idlead) {
+async function fetchActivity(idlead, idmeta_activity) {
   try {
     const query = `
       select
@@ -18,9 +18,10 @@ async function fetchActivity(idlead) {
       where
       a.active_flag = true --- hardcode
       and a.idlead  = $1 --- dynamic pass lead id
+      and a.idmeta_activity = $2
     `;
 
-    const res = await client.query(query, [idlead]);
+    const res = await client.query(query, [idlead,idmeta_activity]);
     return res.rows; // Return the result rows
   } catch (err) {
     console.error("Error executing query", err.stack);

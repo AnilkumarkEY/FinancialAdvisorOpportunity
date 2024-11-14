@@ -60,12 +60,21 @@ async function allLeads(identity, leadWithPagination) {
     const { leadStatus, pageNumber, pageCount } = leadWithPagination;
     const countQuery = `
       SELECT COUNT(*) AS totalCount
-      FROM oppurtunity."lead" l
-      INNER JOIN core.entity_contact ec ON ec."identity" = l.identity_oppurtunity
-      WHERE ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' 
-      AND l.identity_lead_createdby = $1 
-      AND l.activeflag = 1
-      AND l.idmeta_lead_status = $2;
+      FROM
+      oppurtunity."lead" l
+      INNER JOIN
+      oppurtunity.op_metadata om ON om.idmetadata = l.idmeta_lead_type
+      INNER JOIN
+      core.entity e1 ON e1."identity" = l.identity_oppurtunity
+      INNER JOIN
+      core.entity e ON e."identity" = l.identity_lead_createdby
+      LEFT JOIN
+      core.entity_contact ec ON ec."identity" = e1."identity"
+      WHERE
+      ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' AND
+      l.identity_lead_createdby = $1 AND 
+      l.idmeta_lead_status = $2 AND
+      l.activeflag = 1
     `;
     const countRes = await client.query(countQuery, [identity, leadStatus]);
     const totalCount = parseInt(countRes.rows[0].totalcount, 10);
@@ -134,12 +143,21 @@ async function inprogressLeadList(identity, leadWithPagination) {
     ];
     const countQuery = `
       SELECT COUNT(*) AS totalCount
-      FROM oppurtunity."lead" l
-      INNER JOIN core.entity_contact ec ON ec."identity" = l.identity_oppurtunity
-      WHERE ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' 
-      AND l.identity_lead_createdby = $1 
-      AND l.activeflag = 1 
-      AND l.idmeta_lead_status::uuid = ANY($2::uuid[]);
+      FROM
+      oppurtunity."lead" l
+      INNER JOIN
+      oppurtunity.op_metadata om ON om.idmetadata = l.idmeta_lead_type
+      INNER JOIN
+      core.entity e1 ON e1."identity" = l.identity_oppurtunity
+      INNER JOIN
+      core.entity e ON e."identity" = l.identity_lead_createdby
+      LEFT JOIN
+      core.entity_contact ec ON ec."identity" = e1."identity"
+      WHERE
+      ec.idmeta_contact_type = 'eef8f47d787041b59afd37937deed705' AND
+      l.identity_lead_createdby = $1 AND -- dynamic Agent Entity user role
+      l.activeflag = 1 AND
+      l.idmeta_lead_status::uuid = ANY($2::uuid[])
     `;
     const queryToGetPagination = `
       SELECT

@@ -1539,7 +1539,7 @@ paths:
                     type: string
                     example: "An unexpected error occurred."
 
-  /lead-list-search:
+  /dashboard/lead-list-search:
     post:
       summary: Search for leads based on a search query
       description: Retrieves leads based on the provided search query, such as a partial name or other parameters.

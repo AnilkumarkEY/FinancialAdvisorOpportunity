@@ -8,7 +8,7 @@ const moment = require("moment");
 exports.getActivity = async (request, reply) => {
   try {
     // Extract the idlead from the request parameters or query (depends on how the frontend sends it)
-    const { idlead } = request.query;
+    const { idlead,idmetaActivity } = request.query;
     console.log(request.query, request.route);
 
     if (!idlead) {
@@ -26,6 +26,9 @@ exports.getActivity = async (request, reply) => {
       idmeta_activity = 'a7e525c767e54effa5da5734fa9fedc5';
     }else if(request.route == '/activity/fetch-diary'){
       idmeta_activity = 'd21ee67769984670bf8dfe0c8fe208df'
+    }
+    if(idmetaActivity){
+      idmeta_activity = idmetaActivity
     }
     // Fetch activity data from the database
     const activities = await activity.fetchActivity(idlead, idmeta_activity);

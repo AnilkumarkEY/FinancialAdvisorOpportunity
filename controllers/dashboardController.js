@@ -119,6 +119,7 @@ exports.getLeadStatusCount = async (request, reply) => {
         count: parseInt(lead.lead_status_count, 10),
         bgcolor: metaDetail.bgcolor || null,
         icon: metaDetail.icon || null,
+        sortOrder: lead.lead_status == 'New'? 1 : (lead.lead_status == 'Not Intrested'? 3 : ((lead.lead_status == 'Not Contacted'? 4 : null)))
       };
 
       if (
@@ -142,8 +143,10 @@ exports.getLeadStatusCount = async (request, reply) => {
       count: inProgressCount,
       bgcolor: "#FFFFFF",
       icon: process.env.INPROGRESSICON,
+      sortOrder: 2
     });
 
+    processedLeadsStatus.sort((a, b) => a.sortOrder - b.sortOrder); //Sorting as per frontend requirement
     await userProfile.insertEventTransaction(request.isValid);
     return reply
       .status(STATUS_CODES.OK)

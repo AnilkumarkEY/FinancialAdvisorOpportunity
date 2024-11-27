@@ -119,7 +119,7 @@ exports.getLeadStatusCount = async (request, reply) => {
         count: parseInt(lead.lead_status_count, 10),
         bgcolor: metaDetail.bgcolor || null,
         icon: metaDetail.icon || null,
-        sortOrder: lead.lead_status == 'New'? 1 : (lead.lead_status == 'Not Intrested'? 3 : ((lead.lead_status == 'Not Contacted'? 4 : null)))
+        sortOrder: lead.lead_status == 'New'? 1 : (lead.lead_status == 'Not Intrested'? 3 : ((lead.lead_status == 'Not Contactable'? 4 : null)))
       };
 
       if (

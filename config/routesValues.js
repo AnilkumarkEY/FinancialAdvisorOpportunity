@@ -20,4 +20,5 @@ exports.routeValues = {
   "/dashboard/lead-status-overview": "51fa921a3a234d6ab661d82d90113432",
   "/dashboard/lead-list-search": "51fa921a3a234d6ab661d82d90113432",
   "/dashboard/get-status-wise-lead-list": "91f41935488d4332a987c230e0b2099f",
+  "/homepage/get-overview-counts": "91f41935488d4332a987c230e0b2099f",
 };

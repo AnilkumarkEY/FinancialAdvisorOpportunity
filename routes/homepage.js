@@ -7,7 +7,7 @@ async function homePageRoutes(fastify, options) {
   fastify.get(
     "/get-overview-counts",
     { preHandler: [authentication, eventValidation] },
-    homePageController.getOverviewCounts // to be modified
+    homePageController.getOverviewCounts
   );
 }
 

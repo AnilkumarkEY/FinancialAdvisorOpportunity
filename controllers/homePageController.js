@@ -10,15 +10,35 @@ exports.getOverviewCounts = async (request, reply) => {
     newLeads[0]["sortOrder"] = 1;
     const quotesCount = await homepageDB.quoteCount();
     quotesCount[0]["sortOrder"] = 2;
+    const [draft, requirementPending, qcUW, decisionProvided] =
+      await Promise.all([
+        homepageDB.getApplicationTrackerDetails(true, 1),
+        homepageDB.getApplicationTrackerDetails(true, 2),
+        homepageDB.getApplicationTrackerDetails(true, 3),
+        homepageDB.getApplicationTrackerDetails(true, 4),
+      ]);
+    const totalPremium = [
+      draft,
+      requirementPending,
+      qcUW,
+      decisionProvided,
+    ].reduce((acc, item) => acc + parseFloat(item.totalpremium), 0);
+
+    const totalCount = [
+      draft,
+      requirementPending,
+      qcUW,
+      decisionProvided,
+    ].reduce((acc, item) => acc + parseInt(item.count), 0);
     const processedCount = [
       newLeads[0],
       quotesCount[0],
       {
-        customer_payouts_count: 150000,
+        customer_payouts_count: totalPremium,
         sortOrder: 3,
       },
       {
-        application_count: 100,
+        application_count: totalCount,
         sortOrder: 4,
       },
     ];

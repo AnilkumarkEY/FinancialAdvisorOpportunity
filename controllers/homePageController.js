@@ -22,7 +22,7 @@ exports.getOverviewCounts = async (request, reply) => {
       requirementPending,
       qcUW,
       decisionProvided,
-    ].reduce((acc, item) => acc + parseFloat(item.totalpremium), 0);
+    ].reduce((acc, item) => acc + parseFloat(item.totalpremium || 0), 0);
 
     const totalCount = [
       draft,

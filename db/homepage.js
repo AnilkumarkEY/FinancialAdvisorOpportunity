@@ -42,7 +42,7 @@ const getApplicationTrackerDetails = async (
       const res = await client.query(query, [status]);
       return res?.rows[0] || 0;
     } else {
-      let query = `SELECT * FROM newbusiness.application_data WHERE status = $1 `;
+      let query = `SELECT *, TO_CHAR(updated_at, 'DDth Mon YYYY') FROM newbusiness.application_data WHERE status = $1 `;
       if (keyword) {
         query += ` AND (application_id ILIKE '%${keyword}%' OR application_json->'personalDetails'->>'firstName' ILIKE '%${keyword}%' OR application_json->'personalDetails'->>'middleName' ILIKE '%${keyword}%' OR application_json->'personalDetails'->>'lastName' ILIKE '%${keyword}%') `;
       }

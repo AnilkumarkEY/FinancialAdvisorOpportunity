@@ -3,6 +3,11 @@ const STATUS_CODES = require("../utils/statusCodes");
 const { leadDB, userProfile, activity, homepageDB } = require("../db");
 const generateUniqueString = require("../utils/generateUniqueString");
 
+const numberFormatoptions = { 
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2 
+};
+
 exports.getOverviewCounts = async (request, reply) => {
   try {
     const identity = request.isValid.identity;
@@ -34,7 +39,7 @@ exports.getOverviewCounts = async (request, reply) => {
       newLeads[0],
       quotesCount[0],
       {
-        customer_payouts_count: totalPremium,
+        customer_payouts_count: Number(totalPremium).toLocaleString('en', numberFormatoptions),
         sortOrder: 3,
       },
       {
